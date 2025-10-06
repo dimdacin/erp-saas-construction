@@ -8,6 +8,9 @@ import { AppSidebar } from "@/components/app-sidebar";
 import ThemeToggle from "@/components/ThemeToggle";
 import Dashboard from "@/pages/Dashboard";
 import Chantiers from "@/pages/Chantiers";
+import Achats from "@/pages/Achats";
+import Finances from "@/pages/Finances";
+import Documentation from "@/pages/Documentation";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -18,7 +21,10 @@ function Router() {
       <Route path="/salaries" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Salariés - En développement</h1></div>} />
       <Route path="/equipements" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Équipements - En développement</h1></div>} />
       <Route path="/planning" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Planning - En développement</h1></div>} />
+      <Route path="/achats" component={Achats} />
+      <Route path="/finances" component={Finances} />
       <Route path="/budgets" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Budgets - En développement</h1></div>} />
+      <Route path="/documentation" component={Documentation} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, Users, Wrench, Calendar, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Building2, Users, Wrench, Calendar, BarChart3, ShoppingCart, Wallet, FileText } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -38,9 +38,24 @@ const menuItems = [
     icon: Calendar,
   },
   {
+    title: "Achats",
+    url: "/achats",
+    icon: ShoppingCart,
+  },
+  {
+    title: "Finances/Trésorerie",
+    url: "/finances",
+    icon: Wallet,
+  },
+  {
     title: "Budgets",
     url: "/budgets",
     icon: BarChart3,
+  },
+  {
+    title: "Documentation",
+    url: "/documentation",
+    icon: FileText,
   },
 ];
 

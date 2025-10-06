@@ -5,7 +5,7 @@ export default function Chantiers() {
   const projects = [
     {
       id: "1",
-      name: "Construction Immeuble A",
+      name: "Construction Immeuble Résidentiel Paris 15ème",
       status: "en_cours" as const,
       budget: 450000,
       spent: 385000,
@@ -14,7 +14,7 @@ export default function Chantiers() {
     },
     {
       id: "2",
-      name: "Rénovation Usine Nord",
+      name: "Rénovation Usine Automobile Nord",
       status: "retard" as const,
       budget: 280000,
       spent: 295000,
@@ -23,7 +23,7 @@ export default function Chantiers() {
     },
     {
       id: "3",
-      name: "Extension Entrepôt Sud",
+      name: "Extension Entrepôt Logistique Sud",
       status: "planifie" as const,
       budget: 520000,
       spent: 0,
@@ -32,12 +32,48 @@ export default function Chantiers() {
     },
     {
       id: "4",
-      name: "Bureau Est - Aménagement",
+      name: "Aménagement Bureaux Entreprise Est",
       status: "en_cours" as const,
       budget: 180000,
       spent: 165000,
       progress: 88,
       deadline: "10/12/2025"
+    },
+    {
+      id: "5",
+      name: "Construction Parking Souterrain Centre-Ville",
+      status: "en_cours" as const,
+      budget: 650000,
+      spent: 420000,
+      progress: 62,
+      deadline: "28/02/2026"
+    },
+    {
+      id: "6",
+      name: "Rénovation Façade Immeuble Historique",
+      status: "planifie" as const,
+      budget: 125000,
+      spent: 0,
+      progress: 0,
+      deadline: "15/03/2026"
+    },
+    {
+      id: "7",
+      name: "Installation Système Électrique Usine",
+      status: "en_cours" as const,
+      budget: 95000,
+      spent: 78000,
+      progress: 80,
+      deadline: "05/01/2026"
+    },
+    {
+      id: "8",
+      name: "Construction École Primaire Zone Nord",
+      status: "planifie" as const,
+      budget: 1200000,
+      spent: 0,
+      progress: 0,
+      deadline: "01/09/2026"
     }
   ];
 
