@@ -7,13 +7,14 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import ThemeToggle from "@/components/ThemeToggle";
 import Dashboard from "@/pages/Dashboard";
+import Chantiers from "@/pages/Chantiers";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
-      <Route path="/chantiers" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Chantiers - En développement</h1></div>} />
+      <Route path="/chantiers" component={Chantiers} />
       <Route path="/salaries" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Salariés - En développement</h1></div>} />
       <Route path="/equipements" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Équipements - En développement</h1></div>} />
       <Route path="/planning" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Planning - En développement</h1></div>} />

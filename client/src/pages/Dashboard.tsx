@@ -3,7 +3,6 @@ import ProjectsTable from "@/components/ProjectsTable";
 import BudgetChart from "@/components/BudgetChart";
 import ResourceList from "@/components/ResourceList";
 import WorkloadCalendar from "@/components/WorkloadCalendar";
-import AddProjectDialog from "@/components/AddProjectDialog";
 import { Building2, Users, Wrench, DollarSign } from "lucide-react";
 
 export default function Dashboard() {
@@ -117,12 +116,9 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Tableau de bord</h1>
-          <p className="text-muted-foreground mt-1">Vue d'ensemble de votre activité</p>
-        </div>
-        <AddProjectDialog onAdd={(project) => console.log('New project:', project)} />
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight">Tableau de bord</h1>
+        <p className="text-muted-foreground mt-1">Vue d'ensemble de votre activité</p>
       </div>
 
       <DashboardStats stats={stats} />
