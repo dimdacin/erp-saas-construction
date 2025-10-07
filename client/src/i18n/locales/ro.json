@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "Tablou de bord",
+    "chantiers": "Șantiere",
+    "salaries": "Salariați",
+    "equipements": "Echipamente",
+    "planning": "Planificare",
+    "achats": "Achiziții",
+    "finances": "Finanțe/Trezorerie",
+    "budgets": "Bugete",
+    "documentation": "Documentație",
+    "erpGestion": "ERP Gestiune"
+  },
+  "dashboard": {
+    "title": "Tablou de bord",
+    "activeProjects": "Șantiere active",
+    "assignedEmployees": "Salariați alocați",
+    "equipmentInService": "Echipamente în serviciu",
+    "globalBudget": "Buget global",
+    "thisMonth": "în această lună",
+    "utilization": "utilizare",
+    "inMaintenance": "în mentenanță",
+    "realized": "realizat",
+    "activeProjectsTitle": "Proiecte în curs",
+    "budgetAnalysis": "Analiză buget",
+    "employees": "Salariați",
+    "equipment": "Echipamente",
+    "workload": "Sarcină de lucru",
+    "planned": "Planificat",
+    "actual": "Realizat"
+  },
+  "chantiers": {
+    "title": "Șantiere",
+    "subtitle": "Gestionați proiectele și urmăriți progresul lor",
+    "addProject": "Șantier nou",
+    "viewProject": "Vizualizare",
+    "editProject": "Modificare",
+    "inProgress": "În curs",
+    "delayed": "Întârziat",
+    "planned": "Planificat",
+    "status": "Statut",
+    "budget": "Buget",
+    "spent": "Cheltuit",
+    "progress": "Progres",
+    "deadline": "Termen limită"
+  },
+  "equipements": {
+    "title": "Echipamente",
+    "subtitle": "Gestionați parcul dumneavoastră de mașini și echipamente",
+    "newEquipment": "Echipament nou",
+    "importExcel": "Import Excel",
+    "debugExcel": "Debug Excel",
+    "totalEquipment": "Total echipamente",
+    "available": "Disponibile",
+    "inService": "În serviciu",
+    "maintenance": "Mentenanță",
+    "outOfService": "Scos din uz",
+    "equipmentList": "Lista echipamentelor",
+    "search": "Căutare...",
+    "export": "Export",
+    "name": "Nume",
+    "type": "Tip",
+    "serialNumber": "Nr. Serie",
+    "location": "Locație",
+    "status": "Statut",
+    "actions": "Acțiuni"
+  },
+  "achats": {
+    "title": "Achiziții",
+    "subtitle": "Gestionați achizițiile și furnizorii",
+    "inDevelopment": "În curs de dezvoltare"
+  },
+  "finances": {
+    "title": "Finanțe/Trezorerie",
+    "subtitle": "Urmăriți finanțele și trezoreria",
+    "inDevelopment": "În curs de dezvoltare"
+  },
+  "documentation": {
+    "title": "Documentație",
+    "subtitle": "Accesați documentația",
+    "inDevelopment": "În curs de dezvoltare"
+  },
+  "common": {
+    "add": "Adăugare",
+    "edit": "Modificare",
+    "delete": "Ștergere",
+    "cancel": "Anulare",
+    "save": "Salvare",
+    "close": "Închidere",
+    "view": "Vizualizare",
+    "export": "Export",
+    "import": "Import",
+    "search": "Căutare",
+    "loading": "Se încarcă...",
+    "inDevelopment": "În curs de dezvoltare"
+  },
+  "languages": {
+    "fr": "Français",
+    "ru": "Русский",
+    "ro": "Română"
+  }
+}

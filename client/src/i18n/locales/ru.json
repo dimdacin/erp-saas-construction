@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "Панель управления",
+    "chantiers": "Стройплощадки",
+    "salaries": "Сотрудники",
+    "equipements": "Оборудование",
+    "planning": "Планирование",
+    "achats": "Закупки",
+    "finances": "Финансы/Казначейство",
+    "budgets": "Бюджеты",
+    "documentation": "Документация",
+    "erpGestion": "ERP Управление"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "activeProjects": "Активные стройплощадки",
+    "assignedEmployees": "Назначенные сотрудники",
+    "equipmentInService": "Оборудование в эксплуатации",
+    "globalBudget": "Общий бюджет",
+    "thisMonth": "в этом месяце",
+    "utilization": "использование",
+    "inMaintenance": "на обслуживании",
+    "realized": "реализовано",
+    "activeProjectsTitle": "Текущие проекты",
+    "budgetAnalysis": "Анализ бюджета",
+    "employees": "Сотрудники",
+    "equipment": "Оборудование",
+    "workload": "Рабочая нагрузка",
+    "planned": "Запланировано",
+    "actual": "Фактически"
+  },
+  "chantiers": {
+    "title": "Стройплощадки",
+    "subtitle": "Управляйте проектами и отслеживайте их прогресс",
+    "addProject": "Новая стройплощадка",
+    "viewProject": "Посмотреть",
+    "editProject": "Изменить",
+    "inProgress": "В процессе",
+    "delayed": "Задержка",
+    "planned": "Запланировано",
+    "status": "Статус",
+    "budget": "Бюджет",
+    "spent": "Потрачено",
+    "progress": "Прогресс",
+    "deadline": "Срок"
+  },
+  "equipements": {
+    "title": "Оборудование",
+    "subtitle": "Управляйте вашим парком машин и оборудования",
+    "newEquipment": "Новое оборудование",
+    "importExcel": "Импорт Excel",
+    "debugExcel": "Отладка Excel",
+    "totalEquipment": "Всего оборудования",
+    "available": "Доступно",
+    "inService": "В эксплуатации",
+    "maintenance": "Обслуживание",
+    "outOfService": "Не в эксплуатации",
+    "equipmentList": "Список оборудования",
+    "search": "Поиск...",
+    "export": "Экспорт",
+    "name": "Название",
+    "type": "Тип",
+    "serialNumber": "Серийный номер",
+    "location": "Местоположение",
+    "status": "Статус",
+    "actions": "Действия"
+  },
+  "achats": {
+    "title": "Закупки",
+    "subtitle": "Управляйте закупками и поставщиками",
+    "inDevelopment": "В разработке"
+  },
+  "finances": {
+    "title": "Финансы/Казначейство",
+    "subtitle": "Отслеживайте финансы и казначейство",
+    "inDevelopment": "В разработке"
+  },
+  "documentation": {
+    "title": "Документация",
+    "subtitle": "Доступ к документации",
+    "inDevelopment": "В разработке"
+  },
+  "common": {
+    "add": "Добавить",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "close": "Закрыть",
+    "view": "Посмотреть",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "search": "Поиск",
+    "loading": "Загрузка...",
+    "inDevelopment": "В разработке"
+  },
+  "languages": {
+    "fr": "Français",
+    "ru": "Русский",
+    "ro": "Română"
+  }
+}

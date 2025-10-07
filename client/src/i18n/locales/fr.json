@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "chantiers": "Chantiers",
+    "salaries": "Salariés",
+    "equipements": "Équipements",
+    "planning": "Planning",
+    "achats": "Achats",
+    "finances": "Finances/Trésorerie",
+    "budgets": "Budgets",
+    "documentation": "Documentation",
+    "erpGestion": "ERP Gestion"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "activeProjects": "Chantiers Actifs",
+    "assignedEmployees": "Salariés Affectés",
+    "equipmentInService": "Équipements en Service",
+    "globalBudget": "Budget Global",
+    "thisMonth": "ce mois",
+    "utilization": "utilisation",
+    "inMaintenance": "en maintenance",
+    "realized": "réalisé",
+    "activeProjectsTitle": "Projets en cours",
+    "budgetAnalysis": "Analyse Budget",
+    "employees": "Salariés",
+    "equipment": "Équipements",
+    "workload": "Charge de travail",
+    "planned": "Prévisionnel",
+    "actual": "Réalisé"
+  },
+  "chantiers": {
+    "title": "Chantiers",
+    "subtitle": "Gérez vos projets et suivez leur progression",
+    "addProject": "Nouveau chantier",
+    "viewProject": "Voir",
+    "editProject": "Modifier",
+    "inProgress": "En cours",
+    "delayed": "En retard",
+    "planned": "Planifié",
+    "status": "Statut",
+    "budget": "Budget",
+    "spent": "Dépensé",
+    "progress": "Progression",
+    "deadline": "Échéance"
+  },
+  "equipements": {
+    "title": "Équipements",
+    "subtitle": "Gérez votre parc de machines et équipements",
+    "newEquipment": "Nouvel équipement",
+    "importExcel": "Importer Excel",
+    "debugExcel": "Debug Excel",
+    "totalEquipment": "Total Équipements",
+    "available": "Disponibles",
+    "inService": "En service",
+    "maintenance": "Maintenance",
+    "outOfService": "Hors service",
+    "equipmentList": "Liste des équipements",
+    "search": "Rechercher...",
+    "export": "Exporter",
+    "name": "Nom",
+    "type": "Type",
+    "serialNumber": "N° Série",
+    "location": "Localisation",
+    "status": "Statut",
+    "actions": "Actions"
+  },
+  "achats": {
+    "title": "Achats",
+    "subtitle": "Gérez vos achats et fournisseurs",
+    "inDevelopment": "En développement"
+  },
+  "finances": {
+    "title": "Finances/Trésorerie",
+    "subtitle": "Suivez vos finances et trésorerie",
+    "inDevelopment": "En développement"
+  },
+  "documentation": {
+    "title": "Documentation",
+    "subtitle": "Accédez à la documentation",
+    "inDevelopment": "En développement"
+  },
+  "common": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "close": "Fermer",
+    "view": "Voir",
+    "export": "Exporter",
+    "import": "Importer",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "inDevelopment": "En développement"
+  },
+  "languages": {
+    "fr": "Français",
+    "ru": "Русский",
+    "ro": "Română"
+  }
+}
