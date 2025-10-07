@@ -172,6 +172,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/equipements", async (req, res) => {
+    try {
+      await storage.deleteAllEquipements();
+      res.status(200).json({ message: "All equipment deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete all equipements" });
+    }
+  });
+
   // ========== AFFECTATIONS SALARIÉS ROUTES ==========
   app.get("/api/affectations/salaries", async (req, res) => {
     try {

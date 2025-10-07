@@ -38,6 +38,7 @@ export interface IStorage {
   createEquipement(equipement: InsertEquipement): Promise<Equipement>;
   updateEquipement(id: string, equipement: Partial<InsertEquipement>): Promise<Equipement | undefined>;
   deleteEquipement(id: string): Promise<void>;
+  deleteAllEquipements(): Promise<void>;
 
   // Affectations Salariés
   getAllAffectationsSalaries(): Promise<AffectationSalarie[]>;
@@ -145,6 +146,10 @@ export class DbStorage implements IStorage {
 
   async deleteEquipement(id: string): Promise<void> {
     await db.delete(equipements).where(eq(equipements.id, id));
+  }
+
+  async deleteAllEquipements(): Promise<void> {
+    await db.delete(equipements);
   }
 
   // Affectations Salariés
