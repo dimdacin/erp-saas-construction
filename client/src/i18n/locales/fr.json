@@ -60,10 +60,19 @@
     "export": "Exporter",
     "name": "Nom",
     "type": "Type",
+    "category": "Catégorie",
+    "brand": "Marque/Modèle",
+    "registration": "Immatriculation",
+    "fuelConsumption": "Conso. (L/h)",
+    "operatorWage": "Salaire Op. (€/h)",
     "serialNumber": "N° Série",
     "location": "Localisation",
     "status": "Statut",
-    "actions": "Actions"
+    "actions": "Actions",
+    "noEquipment": "Aucun équipement enregistré",
+    "addFirstEquipment": "Ajoutez votre premier équipement ou importez depuis Excel",
+    "fuelUnit": "L/h",
+    "currencySymbol": "€"
   },
   "achats": {
     "title": "Achats",
@@ -92,7 +101,8 @@
     "import": "Importer",
     "search": "Rechercher",
     "loading": "Chargement...",
-    "inDevelopment": "En développement"
+    "inDevelopment": "En développement",
+    "changeLanguage": "Changer de langue"
   },
   "languages": {
     "fr": "Français",

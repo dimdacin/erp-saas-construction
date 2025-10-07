@@ -15,18 +15,21 @@ import Finances from "@/pages/Finances";
 import Documentation from "@/pages/Documentation";
 import NotFound from "@/pages/not-found";
 import "./i18n/config";
+import { useTranslation } from "react-i18next";
 
 function Router() {
+  const { t } = useTranslation();
+  
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/chantiers" component={Chantiers} />
-      <Route path="/salaries" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Salariés - En développement</h1></div>} />
+      <Route path="/salaries" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.salaries')} - {t('common.inDevelopment')}</h1></div>} />
       <Route path="/equipements" component={Equipements} />
-      <Route path="/planning" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Planning - En développement</h1></div>} />
+      <Route path="/planning" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.planning')} - {t('common.inDevelopment')}</h1></div>} />
       <Route path="/achats" component={Achats} />
       <Route path="/finances" component={Finances} />
-      <Route path="/budgets" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">Budgets - En développement</h1></div>} />
+      <Route path="/budgets" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.budgets')} - {t('common.inDevelopment')}</h1></div>} />
       <Route path="/documentation" component={Documentation} />
       <Route component={NotFound} />
     </Switch>

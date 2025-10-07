@@ -10,69 +10,80 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useLocation } from "wouter";
-
-const menuItems = [
-  {
-    title: "Tableau de bord",
-    url: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Chantiers",
-    url: "/chantiers",
-    icon: Building2,
-  },
-  {
-    title: "Salariés",
-    url: "/salaries",
-    icon: Users,
-  },
-  {
-    title: "Équipements",
-    url: "/equipements",
-    icon: Wrench,
-  },
-  {
-    title: "Planning",
-    url: "/planning",
-    icon: Calendar,
-  },
-  {
-    title: "Achats",
-    url: "/achats",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Finances/Trésorerie",
-    url: "/finances",
-    icon: Wallet,
-  },
-  {
-    title: "Budgets",
-    url: "/budgets",
-    icon: BarChart3,
-  },
-  {
-    title: "Documentation",
-    url: "/documentation",
-    icon: FileText,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
   const [location] = useLocation();
+  const { t } = useTranslation();
+
+  const menuItems = [
+    {
+      title: t('nav.dashboard'),
+      url: "/",
+      icon: LayoutDashboard,
+      key: "dashboard"
+    },
+    {
+      title: t('nav.chantiers'),
+      url: "/chantiers",
+      icon: Building2,
+      key: "chantiers"
+    },
+    {
+      title: t('nav.salaries'),
+      url: "/salaries",
+      icon: Users,
+      key: "salaries"
+    },
+    {
+      title: t('nav.equipements'),
+      url: "/equipements",
+      icon: Wrench,
+      key: "equipements"
+    },
+    {
+      title: t('nav.planning'),
+      url: "/planning",
+      icon: Calendar,
+      key: "planning"
+    },
+    {
+      title: t('nav.achats'),
+      url: "/achats",
+      icon: ShoppingCart,
+      key: "achats"
+    },
+    {
+      title: t('nav.finances'),
+      url: "/finances",
+      icon: Wallet,
+      key: "finances"
+    },
+    {
+      title: t('nav.budgets'),
+      url: "/budgets",
+      icon: BarChart3,
+      key: "budgets"
+    },
+    {
+      title: t('nav.documentation'),
+      url: "/documentation",
+      icon: FileText,
+      key: "documentation"
+    },
+  ];
 
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>ERP Gestion</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('nav.erpGestion')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton asChild isActive={location === item.url}>
-                    <a href={item.url} data-testid={`link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <a href={item.url} data-testid={`link-${item.key}`}>
                       <item.icon />
                       <span>{item.title}</span>
                     </a>

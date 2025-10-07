@@ -2,8 +2,10 @@ import ProjectsTable from "@/components/ProjectsTable";
 import AddProjectDialog from "@/components/AddProjectDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Chantier } from "@shared/schema";
+import { useTranslation } from "react-i18next";
 
 export default function Chantiers() {
+  const { t } = useTranslation();
   const { data: chantiers, isLoading } = useQuery<Chantier[]>({
     queryKey: ["/api/chantiers"],
   });
@@ -47,8 +49,8 @@ export default function Chantiers() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Chantiers</h1>
-          <p className="text-muted-foreground mt-1">Gérez vos projets et suivez leur progression</p>
+          <h1 className="text-3xl font-semibold tracking-tight">{t('chantiers.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('chantiers.subtitle')}</p>
         </div>
         <AddProjectDialog onAdd={(project) => console.log('New project:', project)} />
       </div>

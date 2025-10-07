@@ -9,27 +9,27 @@ import { Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const languages = [
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'ro', name: 'Română', flag: '🇷🇴' },
+  { code: 'fr' },
+  { code: 'ru' },
+  { code: 'ro' },
 ];
 
 export default function LanguageSelector() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
-    localStorage.setItem('language', lng);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', lng);
+    }
   };
-
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" data-testid="button-language-selector">
           <Languages className="h-5 w-5" />
-          <span className="sr-only">Changer de langue</span>
+          <span className="sr-only">{t('common.changeLanguage')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -40,9 +40,8 @@ export default function LanguageSelector() {
             data-testid={`language-${language.code}`}
             className="cursor-pointer"
           >
-            <span className="mr-2">{language.flag}</span>
             <span className={i18n.language === language.code ? "font-semibold" : ""}>
-              {language.name}
+              {t(`languages.${language.code}`)}
             </span>
           </DropdownMenuItem>
         ))}

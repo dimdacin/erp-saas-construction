@@ -60,10 +60,19 @@
     "export": "Export",
     "name": "Nume",
     "type": "Tip",
+    "category": "Categorie",
+    "brand": "Marcă/Model",
+    "registration": "Înmatriculare",
+    "fuelConsumption": "Consum (L/h)",
+    "operatorWage": "Salariu op. (€/h)",
     "serialNumber": "Nr. Serie",
     "location": "Locație",
     "status": "Statut",
-    "actions": "Acțiuni"
+    "actions": "Acțiuni",
+    "noEquipment": "Niciun echipament înregistrat",
+    "addFirstEquipment": "Adăugați primul echipament sau importați din Excel",
+    "fuelUnit": "L/h",
+    "currencySymbol": "€"
   },
   "achats": {
     "title": "Achiziții",
@@ -92,7 +101,8 @@
     "import": "Import",
     "search": "Căutare",
     "loading": "Se încarcă...",
-    "inDevelopment": "În curs de dezvoltare"
+    "inDevelopment": "În curs de dezvoltare",
+    "changeLanguage": "Schimbă limba"
   },
   "languages": {
     "fr": "Français",

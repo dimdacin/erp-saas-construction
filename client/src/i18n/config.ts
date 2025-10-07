@@ -10,11 +10,18 @@ const resources = {
   ro: { translation: ro },
 };
 
+const getStoredLanguage = () => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return localStorage.getItem('language') || 'fr';
+  }
+  return 'fr';
+};
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: localStorage.getItem('language') || 'fr',
+    lng: getStoredLanguage(),
     fallbackLng: 'fr',
     interpolation: {
       escapeValue: false,

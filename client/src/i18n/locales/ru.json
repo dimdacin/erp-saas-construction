@@ -60,10 +60,19 @@
     "export": "Экспорт",
     "name": "Название",
     "type": "Тип",
+    "category": "Категория",
+    "brand": "Марка/Модель",
+    "registration": "Регистрация",
+    "fuelConsumption": "Расход (л/ч)",
+    "operatorWage": "Зарплата оп. (€/ч)",
     "serialNumber": "Серийный номер",
     "location": "Местоположение",
     "status": "Статус",
-    "actions": "Действия"
+    "actions": "Действия",
+    "noEquipment": "Оборудование не зарегистрировано",
+    "addFirstEquipment": "Добавьте первое оборудование или импортируйте из Excel",
+    "fuelUnit": "л/ч",
+    "currencySymbol": "€"
   },
   "achats": {
     "title": "Закупки",
@@ -92,7 +101,8 @@
     "import": "Импорт",
     "search": "Поиск",
     "loading": "Загрузка...",
-    "inDevelopment": "В разработке"
+    "inDevelopment": "В разработке",
+    "changeLanguage": "Изменить язык"
   },
   "languages": {
     "fr": "Français",

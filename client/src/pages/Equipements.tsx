@@ -7,22 +7,41 @@ import { useQuery } from "@tanstack/react-query";
 import type { Equipement } from "@shared/schema";
 import ImportExcelDialog from "@/components/ImportExcelDialog";
 import DebugExcelDialog from "@/components/DebugExcelDialog";
+import { useTranslation } from "react-i18next";
 
 export default function Equipements() {
+  const { t, i18n } = useTranslation();
   const { data: equipements, isLoading } = useQuery<Equipement[]>({
     queryKey: ["/api/equipements"],
   });
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(i18n.language, {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const formatFuelConsumption = (value: number) => {
+    const formatted = new Intl.NumberFormat(i18n.language, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(value);
+    return `${formatted} ${t('equipements.fuelUnit')}`;
+  };
+
   const getStatutBadge = (statut: string) => {
     switch (statut) {
       case "disponible":
-        return <Badge variant="default" className="bg-green-600">Disponible</Badge>;
+        return <Badge variant="default" className="bg-green-600">{t('equipements.available')}</Badge>;
       case "en_service":
-        return <Badge variant="secondary">En service</Badge>;
+        return <Badge variant="secondary">{t('equipements.inService')}</Badge>;
       case "maintenance":
-        return <Badge variant="outline" className="border-orange-600 text-orange-600">Maintenance</Badge>;
+        return <Badge variant="outline" className="border-orange-600 text-orange-600">{t('equipements.maintenance')}</Badge>;
       case "hors_service":
-        return <Badge variant="destructive">Hors service</Badge>;
+        return <Badge variant="destructive">{t('equipements.outOfService')}</Badge>;
       default:
         return <Badge>{statut}</Badge>;
     }
@@ -47,25 +66,25 @@ export default function Equipements() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Équipements</h1>
-          <p className="text-muted-foreground mt-1">Gérez votre parc de machines et équipements</p>
+          <h1 className="text-3xl font-semibold tracking-tight">{t('equipements.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('equipements.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <DebugExcelDialog>
             <Button variant="ghost" size="sm" data-testid="button-debug-excel">
               <Bug className="h-4 w-4 mr-2" />
-              Debug Excel
+              {t('equipements.debugExcel')}
             </Button>
           </DebugExcelDialog>
           <ImportExcelDialog>
             <Button variant="outline" data-testid="button-importer-excel">
               <Upload className="h-4 w-4 mr-2" />
-              Importer Excel
+              {t('equipements.importExcel')}
             </Button>
           </ImportExcelDialog>
           <Button data-testid="button-nouvel-equipement">
             <Plus className="h-4 w-4 mr-2" />
-            Nouvel équipement
+            {t('equipements.newEquipment')}
           </Button>
         </div>
       </div>
@@ -73,7 +92,7 @@ export default function Equipements() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Équipements</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('equipements.totalEquipment')}</CardTitle>
             <Wrench className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -83,7 +102,7 @@ export default function Equipements() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Disponibles</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('equipements.available')}</CardTitle>
             <div className="h-2 w-2 rounded-full bg-green-600"></div>
           </CardHeader>
           <CardContent>
@@ -93,7 +112,7 @@ export default function Equipements() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En service</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('equipements.inService')}</CardTitle>
             <div className="h-2 w-2 rounded-full bg-blue-600"></div>
           </CardHeader>
           <CardContent>
@@ -103,7 +122,7 @@ export default function Equipements() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Maintenance</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('equipements.maintenance')}</CardTitle>
             <div className="h-2 w-2 rounded-full bg-orange-600"></div>
           </CardHeader>
           <CardContent>
@@ -115,19 +134,19 @@ export default function Equipements() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Liste des équipements</CardTitle>
+            <CardTitle>{t('equipements.equipmentList')}</CardTitle>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
-                  placeholder="Rechercher..." 
+                  placeholder={t('equipements.search')}
                   className="pl-10 w-[300px]"
                   data-testid="input-recherche-equipement"
                 />
               </div>
               <Button variant="outline" size="sm" data-testid="button-exporter">
                 <Download className="h-4 w-4 mr-2" />
-                Exporter
+                {t('equipements.export')}
               </Button>
             </div>
           </div>
@@ -137,14 +156,14 @@ export default function Equipements() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-3 font-medium">Nom</th>
-                  <th className="text-left p-3 font-medium">Catégorie</th>
-                  <th className="text-left p-3 font-medium">Marque/Modèle</th>
-                  <th className="text-left p-3 font-medium">Immatriculation</th>
-                  <th className="text-left p-3 font-medium">Conso. (L/h)</th>
-                  <th className="text-left p-3 font-medium">Salaire Op. (€/h)</th>
-                  <th className="text-left p-3 font-medium">Statut</th>
-                  <th className="text-left p-3 font-medium">Actions</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.name')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.category')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.brand')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.registration')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.fuelConsumption')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.operatorWage')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.status')}</th>
+                  <th className="text-left p-3 font-medium">{t('equipements.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,20 +183,20 @@ export default function Equipements() {
                     <td className="p-3 text-sm font-mono">{equipement.immatriculation || "-"}</td>
                     <td className="p-3 text-sm">
                       {equipement.consommationGasoilHeure 
-                        ? `${Number(equipement.consommationGasoilHeure).toFixed(1)} L/h`
+                        ? formatFuelConsumption(Number(equipement.consommationGasoilHeure))
                         : "-"
                       }
                     </td>
                     <td className="p-3 text-sm">
                       {equipement.salaireHoraireOperateur 
-                        ? `€${Number(equipement.salaireHoraireOperateur).toFixed(2)}`
+                        ? formatCurrency(Number(equipement.salaireHoraireOperateur))
                         : "-"
                       }
                     </td>
                     <td className="p-3">{getStatutBadge(equipement.statut)}</td>
                     <td className="p-3">
                       <Button variant="ghost" size="sm" data-testid={`button-edit-${equipement.id}`}>
-                        Modifier
+                        {t('common.edit')}
                       </Button>
                     </td>
                   </tr>
@@ -187,8 +206,8 @@ export default function Equipements() {
             {(!equipements || equipements.length === 0) && (
               <div className="text-center py-12 text-muted-foreground">
                 <Wrench className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Aucun équipement enregistré</p>
-                <p className="text-sm mt-1">Ajoutez votre premier équipement ou importez depuis Excel</p>
+                <p>{t('equipements.noEquipment')}</p>
+                <p className="text-sm mt-1">{t('equipements.addFirstEquipment')}</p>
               </div>
             )}
           </div>
