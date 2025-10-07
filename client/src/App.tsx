@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import ThemeToggle from "@/components/ThemeToggle";
+import LanguageSelector from "@/components/LanguageSelector";
 import Dashboard from "@/pages/Dashboard";
 import Chantiers from "@/pages/Chantiers";
 import Equipements from "@/pages/Equipements";
@@ -13,6 +14,7 @@ import Achats from "@/pages/Achats";
 import Finances from "@/pages/Finances";
 import Documentation from "@/pages/Documentation";
 import NotFound from "@/pages/not-found";
+import "./i18n/config";
 
 function Router() {
   return (
@@ -46,7 +48,10 @@ export default function App() {
             <div className="flex flex-col flex-1 overflow-hidden">
               <header className="flex items-center justify-between p-3 border-b">
                 <SidebarTrigger data-testid="button-sidebar-toggle" />
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                  <LanguageSelector />
+                  <ThemeToggle />
+                </div>
               </header>
               <main className="flex-1 overflow-auto">
                 <Router />
