@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Upload, Download, Wrench } from "lucide-react";
+import { Plus, Search, Upload, Download, Wrench, Bug } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import type { Equipement } from "@shared/schema";
 import ImportExcelDialog from "@/components/ImportExcelDialog";
+import DebugExcelDialog from "@/components/DebugExcelDialog";
 
 export default function Equipements() {
   const { data: equipements, isLoading } = useQuery<Equipement[]>({
@@ -50,6 +51,12 @@ export default function Equipements() {
           <p className="text-muted-foreground mt-1">Gérez votre parc de machines et équipements</p>
         </div>
         <div className="flex gap-2">
+          <DebugExcelDialog>
+            <Button variant="ghost" size="sm" data-testid="button-debug-excel">
+              <Bug className="h-4 w-4 mr-2" />
+              Debug Excel
+            </Button>
+          </DebugExcelDialog>
           <ImportExcelDialog>
             <Button variant="outline" data-testid="button-importer-excel">
               <Upload className="h-4 w-4 mr-2" />

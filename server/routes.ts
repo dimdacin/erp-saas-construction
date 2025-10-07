@@ -267,6 +267,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== DEBUG EXCEL ROUTE ==========
+  app.post("/api/equipements/debug-excel", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Aucun fichier fourni" });
+      }
+
+      const XLSX = await import('xlsx');
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames.find(name => name.toLowerCase().includes('machine')) || workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const data: any[] = XLSX.utils.sheet_to_json(worksheet);
+      
+      const firstRow = data[0];
+      const columnNames = Object.keys(firstRow);
+      
+      return res.json({
+        sheetName,
+        columnNames,
+        firstRow,
+        totalRows: data.length
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // ========== IMPORT EXCEL ROUTE ==========
   app.post("/api/equipements/import", upload.single('file'), async (req, res) => {
     try {
