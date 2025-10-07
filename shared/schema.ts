@@ -39,13 +39,17 @@ export const equipements = pgTable("equipements", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   nom: text("nom").notNull(),
   type: text("type").notNull(),
+  categorie: text("categorie"),
   marque: varchar("marque", { length: 100 }),
   modele: varchar("modele", { length: 100 }),
   numeroSerie: varchar("numero_serie", { length: 100 }),
+  immatriculation: varchar("immatriculation", { length: 100 }),
   statut: varchar("statut", { length: 50 }).notNull().default("disponible"),
   localisation: text("localisation"),
   dateAchat: date("date_achat"),
   coutJournalier: decimal("cout_journalier", { precision: 10, scale: 2 }),
+  consommationGasoilHeure: decimal("consommation_gasoil_heure", { precision: 8, scale: 2 }),
+  salaireHoraireOperateur: decimal("salaire_horaire_operateur", { precision: 10, scale: 2 }),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
