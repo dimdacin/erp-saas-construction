@@ -1,81 +1,47 @@
 import ProjectsTable from "@/components/ProjectsTable";
 import AddProjectDialog from "@/components/AddProjectDialog";
+import { useQuery } from "@tanstack/react-query";
+import type { Chantier } from "@shared/schema";
 
 export default function Chantiers() {
-  const projects = [
-    {
-      id: "1",
-      name: "Construction Immeuble Résidentiel Paris 15ème",
-      status: "en_cours" as const,
-      budget: 450000,
-      spent: 385000,
-      progress: 75,
-      deadline: "15/12/2025"
-    },
-    {
-      id: "2",
-      name: "Rénovation Usine Automobile Nord",
-      status: "retard" as const,
-      budget: 280000,
-      spent: 295000,
-      progress: 82,
-      deadline: "30/11/2025"
-    },
-    {
-      id: "3",
-      name: "Extension Entrepôt Logistique Sud",
-      status: "planifie" as const,
-      budget: 520000,
-      spent: 0,
-      progress: 0,
-      deadline: "20/01/2026"
-    },
-    {
-      id: "4",
-      name: "Aménagement Bureaux Entreprise Est",
-      status: "en_cours" as const,
-      budget: 180000,
-      spent: 165000,
-      progress: 88,
-      deadline: "10/12/2025"
-    },
-    {
-      id: "5",
-      name: "Construction Parking Souterrain Centre-Ville",
-      status: "en_cours" as const,
-      budget: 650000,
-      spent: 420000,
-      progress: 62,
-      deadline: "28/02/2026"
-    },
-    {
-      id: "6",
-      name: "Rénovation Façade Immeuble Historique",
-      status: "planifie" as const,
-      budget: 125000,
-      spent: 0,
-      progress: 0,
-      deadline: "15/03/2026"
-    },
-    {
-      id: "7",
-      name: "Installation Système Électrique Usine",
-      status: "en_cours" as const,
-      budget: 95000,
-      spent: 78000,
-      progress: 80,
-      deadline: "05/01/2026"
-    },
-    {
-      id: "8",
-      name: "Construction École Primaire Zone Nord",
-      status: "planifie" as const,
-      budget: 1200000,
-      spent: 0,
-      progress: 0,
-      deadline: "01/09/2026"
+  const { data: chantiers, isLoading } = useQuery<Chantier[]>({
+    queryKey: ["/api/chantiers"],
+  });
+
+  const mapChantierToProject = (chantier: Chantier) => {
+    const budgetPrev = Number(chantier.budgetPrevisionnel);
+    const budgetReal = Number(chantier.budgetRealise);
+    
+    let status: "en_cours" | "retard" | "planifie" = "en_cours";
+    if (chantier.statut === "planifie" || chantier.progression === 0) {
+      status = "planifie";
+    } else if (budgetReal > budgetPrev || (chantier.dateLimite && new Date(chantier.dateLimite) < new Date() && chantier.progression < 100)) {
+      status = "retard";
     }
-  ];
+
+    return {
+      id: chantier.id,
+      name: chantier.nom,
+      status,
+      budget: budgetPrev,
+      spent: budgetReal,
+      progress: chantier.progression,
+      deadline: chantier.dateLimite ? new Date(chantier.dateLimite).toLocaleDateString('fr-FR') : "N/A"
+    };
+  };
+
+  const projects = chantiers?.map(mapChantierToProject) || [];
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted rounded w-1/4"></div>
+          <div className="h-64 bg-muted rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
