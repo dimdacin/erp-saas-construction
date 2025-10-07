@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
+import * as XLSX from 'xlsx';
 import { parseExcelToEquipements } from "./import";
 import { 
   insertChantierSchema, insertSalarieSchema, insertEquipementSchema,
@@ -274,23 +275,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Aucun fichier fourni" });
       }
 
-      const XLSX = await import('xlsx');
       const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
       const sheetName = workbook.SheetNames.find(name => name.toLowerCase().includes('machine')) || workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const data: any[] = XLSX.utils.sheet_to_json(worksheet);
       
-      const firstRow = data[0];
+      const firstRow = data[0] || {};
       const columnNames = Object.keys(firstRow);
       
-      return res.json({
+      return res.status(200).json({
         sheetName,
         columnNames,
         firstRow,
         totalRows: data.length
       });
     } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      console.error('Erreur debug Excel:', error);
+      return res.status(500).json({ error: error.message || 'Erreur inconnue' });
     }
   });
 
