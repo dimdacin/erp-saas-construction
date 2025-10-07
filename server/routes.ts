@@ -1,10 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import multer from "multer";
+import { parseExcelToEquipements } from "./import";
 import { 
   insertChantierSchema, insertSalarieSchema, insertEquipementSchema,
   insertAffectationSalarieSchema, insertAffectationEquipementSchema, insertDepenseSchema
 } from "@shared/schema";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -260,6 +264,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete depense" });
+    }
+  });
+
+  // ========== IMPORT EXCEL ROUTE ==========
+  app.post("/api/equipements/import", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Aucun fichier fourni" });
+      }
+
+      const equipements = parseExcelToEquipements(req.file.buffer);
+      
+      // Importer les équipements dans la base de données
+      const imported = [];
+      for (const equipement of equipements) {
+        try {
+          const created = await storage.createEquipement(equipement);
+          imported.push(created);
+        } catch (error) {
+          console.error('Erreur lors de l\'import d\'un équipement:', error);
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        imported: imported.length,
+        total: equipements.length,
+        equipements: imported
+      });
+    } catch (error) {
+      console.error('Erreur lors de l\'import Excel:', error);
+      res.status(500).json({ error: `Erreur d'import: ${error}` });
     }
   });
 

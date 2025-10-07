@@ -5,6 +5,7 @@ import { Plus, Search, Upload, Download, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import type { Equipement } from "@shared/schema";
+import ImportExcelDialog from "@/components/ImportExcelDialog";
 
 export default function Equipements() {
   const { data: equipements, isLoading } = useQuery<Equipement[]>({
@@ -49,10 +50,12 @@ export default function Equipements() {
           <p className="text-muted-foreground mt-1">Gérez votre parc de machines et équipements</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" data-testid="button-importer-excel">
-            <Upload className="h-4 w-4 mr-2" />
-            Importer Excel
-          </Button>
+          <ImportExcelDialog>
+            <Button variant="outline" data-testid="button-importer-excel">
+              <Upload className="h-4 w-4 mr-2" />
+              Importer Excel
+            </Button>
+          </ImportExcelDialog>
           <Button data-testid="button-nouvel-equipement">
             <Plus className="h-4 w-4 mr-2" />
             Nouvel équipement
