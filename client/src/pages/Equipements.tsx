@@ -149,12 +149,10 @@ export default function Equipements() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-3 font-medium">{t('equipements.name')}</th>
-                  <th className="text-left p-3 font-medium">{t('equipements.category')}</th>
-                  <th className="text-left p-3 font-medium">{t('equipements.brand')}</th>
-                  <th className="text-left p-3 font-medium">{t('equipements.registration')}</th>
-                  <th className="text-left p-3 font-medium">{t('equipements.fuelConsumption')}</th>
-                  <th className="text-left p-3 font-medium">{t('equipements.operatorWage')}</th>
+                  <th className="text-left p-3 font-medium">ID</th>
+                  <th className="text-left p-3 font-medium">Modèle</th>
+                  <th className="text-left p-3 font-medium">Plaque</th>
+                  <th className="text-left p-3 font-medium">Conducteur</th>
                   <th className="text-left p-3 font-medium">{t('equipements.status')}</th>
                   <th className="text-left p-3 font-medium">{t('equipements.actions')}</th>
                 </tr>
@@ -163,28 +161,13 @@ export default function Equipements() {
                 {equipements?.map((equipement) => (
                   <tr key={equipement.id} className="border-b hover-elevate" data-testid={`equipement-row-${equipement.id}`}>
                     <td className="p-3">
-                      <div className="font-medium">{equipement.nom}</div>
+                      <div className="font-medium font-mono">{equipement.numeroSerie || equipement.nom}</div>
                       <div className="text-sm text-muted-foreground">{equipement.type}</div>
                     </td>
-                    <td className="p-3 text-sm">{equipement.categorie || "-"}</td>
-                    <td className="p-3 text-sm">
-                      {equipement.marque && equipement.modele 
-                        ? `${equipement.marque} ${equipement.modele}`
-                        : equipement.marque || equipement.modele || "-"
-                      }
-                    </td>
+                    <td className="p-3 text-sm">{equipement.modele || "-"}</td>
                     <td className="p-3 text-sm font-mono">{equipement.immatriculation || "-"}</td>
-                    <td className="p-3 text-sm">
-                      {equipement.consommationGasoilHeure 
-                        ? formatFuelConsumption(Number(equipement.consommationGasoilHeure))
-                        : "-"
-                      }
-                    </td>
-                    <td className="p-3 text-sm">
-                      {equipement.salaireHoraireOperateur 
-                        ? formatCurrency(Number(equipement.salaireHoraireOperateur))
-                        : "-"
-                      }
+                    <td className="p-3 text-sm text-muted-foreground">
+                      -
                     </td>
                     <td className="p-3">{getStatutBadge(equipement.statut)}</td>
                     <td className="p-3">

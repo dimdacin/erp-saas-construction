@@ -129,7 +129,7 @@ export default function ImportEquipmentDialog({ children }: ImportEquipmentDialo
                   <p className="text-sm font-medium text-green-600">
                     {importResult.imported} équipement(s) importé(s)
                   </p>
-                  {importResult.errors.length > 0 && (
+                  {importResult.errors && importResult.errors.length > 0 && (
                     <div className="text-sm text-muted-foreground">
                       <p className="font-medium">Erreurs :</p>
                       <ul className="list-disc list-inside">
