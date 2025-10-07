@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Download, Wrench } from "lucide-react";
+import { Plus, Search, Download, Wrench, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import type { Equipement } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import ImportEquipmentDialog from "@/components/ImportEquipmentDialog";
 
 export default function Equipements() {
   const { t, i18n } = useTranslation();
@@ -68,6 +69,12 @@ export default function Equipements() {
           <p className="text-muted-foreground mt-1">{t('equipements.subtitle')}</p>
         </div>
         <div className="flex gap-2">
+          <ImportEquipmentDialog>
+            <Button variant="outline" data-testid="button-import-excel">
+              <Upload className="h-4 w-4 mr-2" />
+              Importer Excel
+            </Button>
+          </ImportEquipmentDialog>
           <Button data-testid="button-nouvel-equipement">
             <Plus className="h-4 w-4 mr-2" />
             {t('equipements.newEquipment')}

@@ -38,26 +38,38 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
   
   const autoMapping: ExcelMapping = {
     idMachine: columnNames.find(col => 
-      col.toLowerCase().includes('id') && col.toLowerCase().includes('machine')
+      col.toLowerCase() === 'id' || 
+      (col.toLowerCase().includes('id') && col.toLowerCase().includes('machine'))
     ),
     categorie: columnNames.find(col => 
-      col.toLowerCase().includes('categ') || col.toLowerCase().includes('cat')
+      col.toLowerCase() === 'category' ||
+      col.toLowerCase().includes('categ') || 
+      col.toLowerCase().includes('cat')
     ),
     modele: columnNames.find(col => 
-      col.toLowerCase().includes('modele') || col.toLowerCase().includes('model')
+      col.toLowerCase() === 'model' ||
+      col.toLowerCase().includes('modele')
     ),
     immatriculation: columnNames.find(col => 
-      col.toLowerCase().includes('immat') || col.toLowerCase().includes('plaque')
+      col.toLowerCase() === 'plate_number' ||
+      col.toLowerCase().includes('plate') ||
+      col.toLowerCase().includes('immat') || 
+      col.toLowerCase().includes('plaque')
     ),
     consommation: columnNames.find(col => 
-      col.toLowerCase().includes('conso') || col.toLowerCase().includes('gasoil')
+      col.toLowerCase().includes('fuel_consumption') ||
+      col.toLowerCase().includes('conso') || 
+      col.toLowerCase().includes('gasoil')
     ),
     salaireOperateur: columnNames.find(col => 
+      col.toLowerCase().includes('hourly_rate') ||
       (col.toLowerCase().includes('salaire') || col.toLowerCase().includes('sal')) && 
       (col.toLowerCase().includes('op') || col.toLowerCase().includes('horaire'))
     ),
     marque: columnNames.find(col => 
-      col.toLowerCase().includes('marque') || col.toLowerCase().includes('fabricant')
+      col.toLowerCase().includes('marque') || 
+      col.toLowerCase().includes('fabricant') ||
+      col.toLowerCase().includes('brand')
     ),
     type: columnNames.find(col => 
       col.toLowerCase().includes('type') && !col.toLowerCase().includes('categ')
@@ -86,15 +98,26 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
       // Construire le nom de l'équipement
       const nom = idMachine || modele || `Équipement ${index + 1}`;
 
+      // Déterminer le statut (mapping du format standardisé)
+      const statusFromExcel = row['status'] || '';
+      let statut = 'disponible';
+      if (statusFromExcel.toLowerCase() === 'active') {
+        statut = 'disponible';
+      } else if (statusFromExcel.toLowerCase().includes('maintenance')) {
+        statut = 'maintenance';
+      } else if (statusFromExcel.toLowerCase().includes('out') || statusFromExcel.toLowerCase().includes('hors')) {
+        statut = 'hors_service';
+      }
+
       const equipement: InsertEquipement = {
         nom,
-        type: type || 'Autre',
+        type: type || categorie || 'Autre',
         categorie: categorie || null,
         marque: marque || null,
         modele: modele || null,
         numeroSerie: idMachine || null,
         immatriculation: immatriculation || null,
-        statut: 'disponible',
+        statut: statut,
         localisation: null,
         dateAchat: null,
         coutJournalier: null,
