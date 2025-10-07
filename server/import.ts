@@ -32,6 +32,10 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
   const firstRow = data[0];
   const columnNames = Object.keys(firstRow);
   
+  // Log des colonnes détectées pour debug
+  console.log('Colonnes détectées dans le fichier Excel:', columnNames);
+  console.log('Première ligne de données:', firstRow);
+  
   const autoMapping: ExcelMapping = {
     idMachine: columnNames.find(col => 
       col.toLowerCase().includes('id') && col.toLowerCase().includes('machine')
