@@ -271,31 +271,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/equipements/import", upload.single('file'), async (req, res) => {
     try {
       if (!req.file) {
-        return res.status(400).json({ error: "Aucun fichier fourni" });
+        return res.status(400).json({ success: false, error: "Aucun fichier fourni" });
       }
 
+      console.log('Fichier reçu:', req.file.originalname, 'Taille:', req.file.size);
+      
       const equipements = parseExcelToEquipements(req.file.buffer);
+      console.log('Équipements détectés:', equipements.length);
       
       // Importer les équipements dans la base de données
       const imported = [];
+      const errors = [];
+      
       for (const equipement of equipements) {
         try {
           const created = await storage.createEquipement(equipement);
           imported.push(created);
-        } catch (error) {
+        } catch (error: any) {
           console.error('Erreur lors de l\'import d\'un équipement:', error);
+          errors.push({ equipement: equipement.nom, error: error.message });
         }
       }
 
-      res.json({ 
+      console.log('Import terminé:', imported.length, 'importés sur', equipements.length);
+      
+      return res.status(200).json({ 
         success: true, 
         imported: imported.length,
         total: equipements.length,
+        errors: errors.length > 0 ? errors : undefined,
         equipements: imported
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'import Excel:', error);
-      res.status(500).json({ error: `Erreur d'import: ${error}` });
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Erreur inconnue lors de l\'import' 
+      });
     }
   });
 
