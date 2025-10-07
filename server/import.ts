@@ -77,6 +77,8 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
   };
 
   const finalMapping = { ...autoMapping, ...mapping };
+  
+  console.log('Final mapping:', finalMapping);
 
   const equipements: InsertEquipement[] = data.map((row, index) => {
     try {
