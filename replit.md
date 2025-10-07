@@ -6,6 +6,15 @@ This is a comprehensive Enterprise Resource Planning (ERP) system built as a Saa
 
 The system is designed for construction and industrial businesses, offering features like budget tracking, resource allocation, workload planning, and multi-language support (French, Russian, Romanian).
 
+## Recent Changes
+
+**October 2025 - Equipment Management Improvements**
+- Cleaned database from duplicate equipment imports (921 → 183 unique items)
+- Simplified equipment table to display 4 essential columns: ID (serial number), Model, Plate Number, Driver Name
+- Fixed ImportEquipmentDialog TypeScript error with null check for errors array
+- Standardized Excel import process with single-import guarantee
+- Prepared infrastructure for future assignment functionality (equipment-to-site tracking with driver assignments)
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
