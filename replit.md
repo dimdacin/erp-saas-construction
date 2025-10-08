@@ -8,6 +8,33 @@ The system is designed for construction and industrial businesses, offering feat
 
 ## Recent Changes
 
+**October 2025 - Purchase Reception Workflow (Achat/Stocks)**
+- Implemented complete purchase reception workflow with operator validation and invoice photo attachments
+- Extended `depenses` table schema with reception tracking fields:
+  - `statut_reception` enum: 'en_attente' (pending) | 'receptionne' (received)
+  - `date_reception` - Date when items were received and validated
+  - `operateur_reception` - Name of operator who validated the reception
+  - `photo_facture_path` - Base64 data URL of invoice photo
+- Created secure file upload API endpoint `/api/upload-facture`:
+  - Filename sanitization using regex to prevent path traversal attacks
+  - Base64 storage with buffer management (production: consider S3/Cloudinary)
+  - Returns data URL for immediate display in UI
+- Built two new dialog components using React Hook Form + Zod validation:
+  - **NewPurchaseDialog**: Create purchases with stock item selection, quantity, amount, level (admin/chantier), optional chantier
+  - **ReceptionDialog**: Validate received items with operator name, reception date, and invoice photo upload
+- API routes:
+  - `POST /api/depenses` - Create new purchase (initializes with statut_reception='en_attente')
+  - `PATCH /api/depenses/:id/reception` - Validate reception and update status to 'receptionne'
+- Enhanced Purchases tab UI:
+  - Status badges with color coding (yellow for pending, green for received)
+  - Reception metadata columns (date, operator name)
+  - "View Invoice" button to display uploaded photos in new tab
+  - "Réceptionner" action button for pending purchases (opens ReceptionDialog)
+- Complete i18n coverage for new workflow (FR/RU/RO):
+  - Dialog titles, descriptions, form labels, placeholders
+  - Status labels, toast notifications, error messages
+  - Removed hard-coded French validation messages to support all locales
+
 **October 2025 - Achat/Stocks Module Implementation**
 - Renamed "Achats" module to "Achat/Stocks" in all 3 languages (French, Russian, Romanian)
 - Created stock management infrastructure:
