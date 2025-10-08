@@ -5,7 +5,7 @@
     "salaries": "Сотрудники",
     "equipements": "Оборудование",
     "planning": "Планирование",
-    "achats": "Закупки",
+    "achats": "Закупки/Запасы",
     "finances": "Финансы/Казначейство",
     "budgets": "Бюджеты",
     "documentation": "Документация",
@@ -75,9 +75,35 @@
     "currencySymbol": "€"
   },
   "achats": {
-    "title": "Закупки",
-    "subtitle": "Управляйте закупками и поставщиками",
-    "inDevelopment": "В разработке"
+    "title": "Закупки/Запасы",
+    "subtitle": "Управляйте закупками, запасами и материалами",
+    "inDevelopment": "В разработке",
+    "stockItems": "Товары на складе",
+    "purchases": "Закупки",
+    "adminLevel": "Уровень Админ",
+    "siteLevel": "Уровень Площадки",
+    "itemId": "ID Товара",
+    "itemName": "Название",
+    "factory": "Завод",
+    "factories": "Заводы",
+    "quantity": "Количество",
+    "level": "Уровень",
+    "unit": "Единица",
+    "newFactory": "Новый завод",
+    "newArticle": "Новый товар",
+    "totalStock": "Всего на складе",
+    "productionFactories": "Производственные заводы",
+    "articlesCount": "товаров",
+    "noStockItems": "Товары на складе отсутствуют",
+    "addFirstStockItem": "Добавьте первый товар на склад",
+    "noFactories": "Нет зарегистрированных заводов",
+    "addFirstFactory": "Добавьте первый производственный завод",
+    "category": "Категория",
+    "recentPurchases": "Последние закупки",
+    "supplier": "Поставщик",
+    "amount": "Сумма",
+    "date": "Дата",
+    "invoice": "Счет"
   },
   "finances": {
     "title": "Финансы/Казначейство",
@@ -102,7 +128,9 @@
     "search": "Поиск",
     "loading": "Загрузка...",
     "inDevelopment": "В разработке",
-    "changeLanguage": "Изменить язык"
+    "changeLanguage": "Изменить язык",
+    "description": "Описание",
+    "actions": "Действия"
   },
   "languages": {
     "fr": "Français",

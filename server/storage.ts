@@ -3,13 +3,16 @@ import { eq, desc } from "drizzle-orm";
 import { 
   users, chantiers, salaries, equipements, 
   affectationsSalaries, affectationsEquipements, depenses,
+  usines, stockItems,
   type User, type InsertUser,
   type Chantier, type InsertChantier,
   type Salarie, type InsertSalarie,
   type Equipement, type InsertEquipement,
   type AffectationSalarie, type InsertAffectationSalarie,
   type AffectationEquipement, type InsertAffectationEquipement,
-  type Depense, type InsertDepense
+  type Depense, type InsertDepense,
+  type Usine, type InsertUsine,
+  type StockItem, type InsertStockItem
 } from "@shared/schema";
 
 export interface IStorage {
@@ -57,6 +60,19 @@ export interface IStorage {
   getDepensesByChantier(chantierId: string): Promise<Depense[]>;
   createDepense(depense: InsertDepense): Promise<Depense>;
   deleteDepense(id: string): Promise<void>;
+
+  // Usines
+  getAllUsines(): Promise<Usine[]>;
+  getUsine(id: string): Promise<Usine | undefined>;
+  createUsine(usine: InsertUsine): Promise<Usine>;
+  deleteUsine(id: string): Promise<void>;
+
+  // Stock Items
+  getAllStockItems(): Promise<StockItem[]>;
+  getStockItem(id: string): Promise<StockItem | undefined>;
+  createStockItem(stockItem: InsertStockItem): Promise<StockItem>;
+  updateStockItem(id: string, stockItem: Partial<InsertStockItem>): Promise<StockItem | undefined>;
+  deleteStockItem(id: string): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -210,6 +226,49 @@ export class DbStorage implements IStorage {
 
   async deleteDepense(id: string): Promise<void> {
     await db.delete(depenses).where(eq(depenses.id, id));
+  }
+
+  // Usines
+  async getAllUsines(): Promise<Usine[]> {
+    return await db.select().from(usines).orderBy(desc(usines.createdAt));
+  }
+
+  async getUsine(id: string): Promise<Usine | undefined> {
+    const result = await db.select().from(usines).where(eq(usines.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createUsine(insertUsine: InsertUsine): Promise<Usine> {
+    const result = await db.insert(usines).values(insertUsine).returning();
+    return result[0];
+  }
+
+  async deleteUsine(id: string): Promise<void> {
+    await db.delete(usines).where(eq(usines.id, id));
+  }
+
+  // Stock Items
+  async getAllStockItems(): Promise<StockItem[]> {
+    return await db.select().from(stockItems).orderBy(desc(stockItems.createdAt));
+  }
+
+  async getStockItem(id: string): Promise<StockItem | undefined> {
+    const result = await db.select().from(stockItems).where(eq(stockItems.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createStockItem(insertStockItem: InsertStockItem): Promise<StockItem> {
+    const result = await db.insert(stockItems).values(insertStockItem).returning();
+    return result[0];
+  }
+
+  async updateStockItem(id: string, stockItem: Partial<InsertStockItem>): Promise<StockItem | undefined> {
+    const result = await db.update(stockItems).set(stockItem).where(eq(stockItems.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteStockItem(id: string): Promise<void> {
+    await db.delete(stockItems).where(eq(stockItems.id, id));
   }
 }
 

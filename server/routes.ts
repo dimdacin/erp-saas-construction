@@ -277,6 +277,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== USINES ROUTES ==========
+  app.get("/api/usines", async (req, res) => {
+    try {
+      const usines = await storage.getAllUsines();
+      res.json(usines);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usines" });
+    }
+  });
+
+  app.post("/api/usines", async (req, res) => {
+    try {
+      const { insertUsineSchema } = await import("@shared/schema");
+      const validated = insertUsineSchema.parse(req.body);
+      const usine = await storage.createUsine(validated);
+      res.status(201).json(usine);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid usine data" });
+    }
+  });
+
+  app.delete("/api/usines/:id", async (req, res) => {
+    try {
+      await storage.deleteUsine(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete usine" });
+    }
+  });
+
+  // ========== STOCK ITEMS ROUTES ==========
+  app.get("/api/stock-items", async (req, res) => {
+    try {
+      const stockItems = await storage.getAllStockItems();
+      res.json(stockItems);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch stock items" });
+    }
+  });
+
+  app.post("/api/stock-items", async (req, res) => {
+    try {
+      const { insertStockItemSchema } = await import("@shared/schema");
+      const validated = insertStockItemSchema.parse(req.body);
+      const stockItem = await storage.createStockItem(validated);
+      res.status(201).json(stockItem);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid stock item data" });
+    }
+  });
+
+  app.patch("/api/stock-items/:id", async (req, res) => {
+    try {
+      const { insertStockItemSchema } = await import("@shared/schema");
+      const validated = insertStockItemSchema.partial().parse(req.body);
+      const stockItem = await storage.updateStockItem(req.params.id, validated);
+      if (!stockItem) {
+        return res.status(404).json({ error: "Stock item not found" });
+      }
+      res.json(stockItem);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid stock item data" });
+    }
+  });
+
+  app.delete("/api/stock-items/:id", async (req, res) => {
+    try {
+      await storage.deleteStockItem(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete stock item" });
+    }
+  });
+
   // ========== DEBUG EXCEL ROUTE ==========
   app.post("/api/equipements/debug-excel", upload.single('file'), async (req, res) => {
     try {

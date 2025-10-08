@@ -5,7 +5,7 @@
     "salaries": "Salariés",
     "equipements": "Équipements",
     "planning": "Planning",
-    "achats": "Achats",
+    "achats": "Achat/Stocks",
     "finances": "Finances/Trésorerie",
     "budgets": "Budgets",
     "documentation": "Documentation",
@@ -75,9 +75,35 @@
     "currencySymbol": "€"
   },
   "achats": {
-    "title": "Achats",
-    "subtitle": "Gérez vos achats et fournisseurs",
-    "inDevelopment": "En développement"
+    "title": "Achat/Stocks",
+    "subtitle": "Gérez vos achats, stocks et matériaux",
+    "inDevelopment": "En développement",
+    "stockItems": "Articles en stock",
+    "purchases": "Achats",
+    "adminLevel": "Niveau Admin",
+    "siteLevel": "Niveau Chantier",
+    "itemId": "ID Article",
+    "itemName": "Nom",
+    "factory": "Usine",
+    "factories": "Usines",
+    "quantity": "Quantité",
+    "level": "Niveau",
+    "unit": "Unité",
+    "newFactory": "Nouvelle usine",
+    "newArticle": "Nouvel article",
+    "totalStock": "Total en stock",
+    "productionFactories": "Usines de production",
+    "articlesCount": "articles",
+    "noStockItems": "Aucun article en stock",
+    "addFirstStockItem": "Ajoutez votre premier article de stock",
+    "noFactories": "Aucune usine enregistrée",
+    "addFirstFactory": "Ajoutez votre première usine de production",
+    "category": "Catégorie",
+    "recentPurchases": "Achats récents",
+    "supplier": "Fournisseur",
+    "amount": "Montant",
+    "date": "Date",
+    "invoice": "Facture"
   },
   "finances": {
     "title": "Finances/Trésorerie",
@@ -102,7 +128,9 @@
     "search": "Rechercher",
     "loading": "Chargement...",
     "inDevelopment": "En développement",
-    "changeLanguage": "Changer de langue"
+    "changeLanguage": "Changer de langue",
+    "description": "Description",
+    "actions": "Actions"
   },
   "languages": {
     "fr": "Français",

@@ -5,7 +5,7 @@
     "salaries": "Salariați",
     "equipements": "Echipamente",
     "planning": "Planificare",
-    "achats": "Achiziții",
+    "achats": "Achiziții/Stocuri",
     "finances": "Finanțe/Trezorerie",
     "budgets": "Bugete",
     "documentation": "Documentație",
@@ -75,9 +75,35 @@
     "currencySymbol": "€"
   },
   "achats": {
-    "title": "Achiziții",
-    "subtitle": "Gestionați achizițiile și furnizorii",
-    "inDevelopment": "În curs de dezvoltare"
+    "title": "Achiziții/Stocuri",
+    "subtitle": "Gestionați achizițiile, stocurile și materialele",
+    "inDevelopment": "În curs de dezvoltare",
+    "stockItems": "Articole în stoc",
+    "purchases": "Achiziții",
+    "adminLevel": "Nivel Admin",
+    "siteLevel": "Nivel Șantier",
+    "itemId": "ID Articol",
+    "itemName": "Nume",
+    "factory": "Fabrică",
+    "factories": "Fabrici",
+    "quantity": "Cantitate",
+    "level": "Nivel",
+    "unit": "Unitate",
+    "newFactory": "Fabrică nouă",
+    "newArticle": "Articol nou",
+    "totalStock": "Total în stoc",
+    "productionFactories": "Fabrici de producție",
+    "articlesCount": "articole",
+    "noStockItems": "Niciun articol în stoc",
+    "addFirstStockItem": "Adăugați primul articol în stoc",
+    "noFactories": "Nicio fabrică înregistrată",
+    "addFirstFactory": "Adăugați prima fabrică de producție",
+    "category": "Categorie",
+    "recentPurchases": "Achiziții recente",
+    "supplier": "Furnizor",
+    "amount": "Sumă",
+    "date": "Dată",
+    "invoice": "Factură"
   },
   "finances": {
     "title": "Finanțe/Trezorerie",
@@ -102,7 +128,9 @@
     "search": "Căutare",
     "loading": "Se încarcă...",
     "inDevelopment": "În curs de dezvoltare",
-    "changeLanguage": "Schimbă limba"
+    "changeLanguage": "Schimbă limba",
+    "description": "Descriere",
+    "actions": "Acțiuni"
   },
   "languages": {
     "fr": "Français",

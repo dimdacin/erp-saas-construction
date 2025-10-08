@@ -74,14 +74,34 @@ export const affectationsEquipements = pgTable("affectations_equipements", {
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
+export const usines = pgTable("usines", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  nom: text("nom").notNull(),
+  localisation: text("localisation"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const stockItems = pgTable("stock_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  itemId: varchar("item_id", { length: 100 }).notNull().unique(),
+  nom: text("nom").notNull(),
+  usineId: varchar("usine_id").references(() => usines.id, { onDelete: "set null" }),
+  categorie: varchar("categorie", { length: 100 }),
+  quantite: decimal("quantite", { precision: 12, scale: 2 }).notNull().default("0"),
+  unite: varchar("unite", { length: 50 }),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
 export const depenses = pgTable("depenses", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  chantierId: varchar("chantier_id").notNull().references(() => chantiers.id, { onDelete: "cascade" }),
+  chantierId: varchar("chantier_id").references(() => chantiers.id, { onDelete: "cascade" }),
+  niveau: varchar("niveau", { length: 20 }).notNull().default("chantier"),
   categorie: varchar("categorie", { length: 100 }).notNull(),
   description: text("description").notNull(),
   montant: decimal("montant", { precision: 12, scale: 2 }).notNull(),
   date: date("date").notNull(),
   facture: varchar("facture", { length: 100 }),
+  stockItemId: varchar("stock_item_id").references(() => stockItems.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
@@ -116,10 +136,26 @@ export const insertAffectationEquipementSchema = createInsertSchema(affectations
   createdAt: true,
 });
 
+export const insertUsineSchema = createInsertSchema(usines).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertStockItemSchema = createInsertSchema(stockItems).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertDepenseSchema = createInsertSchema(depenses).omit({
   id: true,
   createdAt: true,
 });
+
+export type InsertUsine = z.infer<typeof insertUsineSchema>;
+export type Usine = typeof usines.$inferSelect;
+
+export type InsertStockItem = z.infer<typeof insertStockItemSchema>;
+export type StockItem = typeof stockItems.$inferSelect;
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
