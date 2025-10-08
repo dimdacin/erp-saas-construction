@@ -8,6 +8,22 @@ The system is designed for construction and industrial businesses, offering feat
 
 ## Recent Changes
 
+**October 2025 - Achat/Stocks Module Implementation**
+- Renamed "Achats" module to "Achat/Stocks" in all 3 languages (French, Russian, Romanian)
+- Created stock management infrastructure:
+  - New `usines` table for factory/production facility management
+  - New `stock_items` table for inventory tracking with itemId, name, factory reference, quantity, unit
+  - Enhanced `depenses` table with `niveau` field (admin/chantier) and `stockItemId` reference
+  - Made `depenses.chantierId` nullable to support admin-level purchases
+- Implemented full CRUD API routes:
+  - `/api/usines` - Factory management (GET, POST, DELETE)
+  - `/api/stock-items` - Stock inventory (GET, POST, PATCH, DELETE)
+- Updated Achats page with 3 tabs:
+  - **Stock Items**: Displays ID, name, factory, quantity, unit with full i18n
+  - **Purchases**: Shows purchase tracking with niveau badges (Admin/Chantier), linked to chantiers
+  - **Factories**: Lists production facilities with article counts
+- Complete internationalization across all UI elements and empty states
+
 **October 2025 - Equipment Management Improvements**
 - Cleaned database from duplicate equipment imports (921 → 183 unique items)
 - Simplified equipment table to display 4 essential columns: ID (serial number), Model, Plate Number, Driver Name
