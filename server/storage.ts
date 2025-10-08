@@ -59,6 +59,7 @@ export interface IStorage {
   getAllDepenses(): Promise<Depense[]>;
   getDepensesByChantier(chantierId: string): Promise<Depense[]>;
   createDepense(depense: InsertDepense): Promise<Depense>;
+  updateDepenseReception(id: string, reception: { dateReception: string, operateurReception: string, photoFacturePath?: string }): Promise<Depense | undefined>;
   deleteDepense(id: string): Promise<void>;
 
   // Usines
@@ -221,6 +222,19 @@ export class DbStorage implements IStorage {
 
   async createDepense(insertDepense: InsertDepense): Promise<Depense> {
     const result = await db.insert(depenses).values(insertDepense).returning();
+    return result[0];
+  }
+
+  async updateDepenseReception(id: string, reception: { dateReception: string, operateurReception: string, photoFacturePath?: string }): Promise<Depense | undefined> {
+    const result = await db.update(depenses)
+      .set({
+        statutReception: 'receptionne',
+        dateReception: reception.dateReception,
+        operateurReception: reception.operateurReception,
+        photoFacturePath: reception.photoFacturePath
+      })
+      .where(eq(depenses.id, id))
+      .returning();
     return result[0];
   }
 

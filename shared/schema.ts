@@ -99,9 +99,14 @@ export const depenses = pgTable("depenses", {
   categorie: varchar("categorie", { length: 100 }).notNull(),
   description: text("description").notNull(),
   montant: decimal("montant", { precision: 12, scale: 2 }).notNull(),
+  quantite: decimal("quantite", { precision: 12, scale: 2 }),
   date: date("date").notNull(),
   facture: varchar("facture", { length: 100 }),
   stockItemId: varchar("stock_item_id").references(() => stockItems.id, { onDelete: "set null" }),
+  statutReception: varchar("statut_reception", { length: 20 }).notNull().default("en_attente"),
+  dateReception: date("date_reception"),
+  operateurReception: text("operateur_reception"),
+  photoFacturePath: text("photo_facture_path"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
@@ -149,6 +154,10 @@ export const insertStockItemSchema = createInsertSchema(stockItems).omit({
 export const insertDepenseSchema = createInsertSchema(depenses).omit({
   id: true,
   createdAt: true,
+  statutReception: true,
+  dateReception: true,
+  operateurReception: true,
+  photoFacturePath: true,
 });
 
 export type InsertUsine = z.infer<typeof insertUsineSchema>;

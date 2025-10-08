@@ -277,6 +277,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/depenses/:id/reception", async (req, res) => {
+    try {
+      const { dateReception, operateurReception, photoFacturePath } = req.body;
+      
+      if (!dateReception || !operateurReception) {
+        return res.status(400).json({ error: "Date de réception et opérateur requis" });
+      }
+
+      const depense = await storage.updateDepenseReception(req.params.id, {
+        dateReception,
+        operateurReception,
+        photoFacturePath
+      });
+
+      if (!depense) {
+        return res.status(404).json({ error: "Depense not found" });
+      }
+
+      res.json(depense);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update depense reception" });
+    }
+  });
+
+  app.post("/api/upload-facture", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Aucun fichier fourni" });
+      }
+
+      // Sanitize filename: remove path separators and special characters
+      const originalName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const timestamp = Date.now();
+      const filename = `facture_${timestamp}_${originalName}`;
+      const filePath = `/uploads/factures/${filename}`;
+
+      // Store file buffer in base64 for demo purposes
+      // In production, save to disk or cloud storage (S3, Cloudinary, etc.)
+      const base64Data = req.file.buffer.toString('base64');
+      const dataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
+
+      res.json({ 
+        success: true, 
+        path: dataUrl,  // Return data URL for display
+        filename: filename
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to upload invoice photo" });
+    }
+  });
+
   // ========== USINES ROUTES ==========
   app.get("/api/usines", async (req, res) => {
     try {

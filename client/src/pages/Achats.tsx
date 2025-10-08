@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, Factory, Box, ShoppingCart } from "lucide-react";
+import { Package, Factory, Box, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { StockItem, Usine, Depense, Chantier } from "@shared/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import NewPurchaseDialog from "@/components/NewPurchaseDialog";
+import ReceptionDialog from "@/components/ReceptionDialog";
 
 export default function Achats() {
   const { t } = useTranslation();
@@ -67,14 +69,7 @@ export default function Achats() {
           <p className="text-muted-foreground mt-1">{t('achats.subtitle')}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" data-testid="button-nouvelle-usine">
-            <Factory className="h-4 w-4 mr-2" />
-            {t('achats.newFactory')}
-          </Button>
-          <Button data-testid="button-nouvel-article">
-            <Plus className="h-4 w-4 mr-2" />
-            {t('achats.newArticle')}
-          </Button>
+          <NewPurchaseDialog stockItems={stockItems} chantiers={chantiers} />
         </div>
       </div>
 
@@ -193,28 +188,57 @@ export default function Achats() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.receptionStatus')}</th>
                         <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.level')}</th>
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.category')}</th>
                         <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('common.description')}</th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.quantity')}</th>
                         <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.amount')}</th>
                         <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.date')}</th>
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.invoice')}</th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('achats.operator')}</th>
+                        <th className="text-right p-3 text-sm font-medium text-muted-foreground">{t('common.actions')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {depenses.map((depense) => (
                         <tr key={depense.id} className="border-b hover-elevate" data-testid={`depense-${depense.id}`}>
                           <td className="p-3">
+                            {depense.statutReception === 'receptionne' ? (
+                              <Badge variant="default" data-testid={`status-received-${depense.id}`}>
+                                {t('achats.statusReceived')}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" data-testid={`status-pending-${depense.id}`}>
+                                {t('achats.statusPending')}
+                              </Badge>
+                            )}
+                          </td>
+                          <td className="p-3">
                             <div className="flex flex-col gap-1">
                               {getNiveauBadge(depense.niveau)}
                               <span className="text-xs text-muted-foreground">{getChantierNom(depense.chantierId)}</span>
                             </div>
                           </td>
-                          <td className="p-3 text-sm">{depense.categorie}</td>
                           <td className="p-3 text-sm">{depense.description}</td>
+                          <td className="p-3 text-sm">{depense.quantite ? Number(depense.quantite).toFixed(2) : "-"}</td>
                           <td className="p-3 text-sm font-medium">€{Number(depense.montant).toFixed(2)}</td>
-                          <td className="p-3 text-sm text-muted-foreground">{depense.date}</td>
-                          <td className="p-3 text-sm text-muted-foreground">{depense.facture || "-"}</td>
+                          <td className="p-3 text-sm text-muted-foreground">
+                            <div>{depense.date}</div>
+                            {depense.dateReception && (
+                              <div className="text-xs text-muted-foreground">
+                                Reçu: {depense.dateReception}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-3 text-sm text-muted-foreground">
+                            {depense.operateurReception || "-"}
+                          </td>
+                          <td className="p-3 text-right">
+                            {depense.statutReception === 'en_attente' ? (
+                              <ReceptionDialog depense={depense} />
+                            ) : (
+                              <span className="text-sm text-muted-foreground">-</span>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
