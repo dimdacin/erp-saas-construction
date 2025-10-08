@@ -1,0 +1,5 @@
+- RH: import salariés (CSV), liste, recherche
+- Équipements: import, liste, coût horaire, conso
+- Chantiers: budget, dépensé, progression, échéance
+- Planning: affectations quotidiennes (employé/engin/chantier/heures)
+- Finances: coûts par chantier (catégorie, date), KPI Budget vs Réel
