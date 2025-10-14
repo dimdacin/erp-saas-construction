@@ -23,10 +23,18 @@ export default function Chantiers() {
 
     return {
       id: chantier.id,
+      codeProjet: chantier.codeProjet || undefined,
       name: chantier.nom,
+      beneficiaire: chantier.beneficiaire || undefined,
       status,
       budget: budgetPrev,
+      budgetMainDoeuvre: chantier.budgetMainDoeuvre !== undefined && chantier.budgetMainDoeuvre !== null ? Number(chantier.budgetMainDoeuvre) : undefined,
+      budgetMateriaux: chantier.budgetMateriaux !== undefined && chantier.budgetMateriaux !== null ? Number(chantier.budgetMateriaux) : undefined,
+      budgetEquipement: chantier.budgetEquipement !== undefined && chantier.budgetEquipement !== null ? Number(chantier.budgetEquipement) : undefined,
       spent: budgetReal,
+      spentMainDoeuvre: chantier.budgetReelMainDoeuvre !== undefined && chantier.budgetReelMainDoeuvre !== null ? Number(chantier.budgetReelMainDoeuvre) : undefined,
+      spentMateriaux: chantier.budgetReelMateriaux !== undefined && chantier.budgetReelMateriaux !== null ? Number(chantier.budgetReelMateriaux) : undefined,
+      spentEquipement: chantier.budgetReelEquipement !== undefined && chantier.budgetReelEquipement !== null ? Number(chantier.budgetReelEquipement) : undefined,
       progress: chantier.progression,
       deadline: chantier.dateLimite ? new Date(chantier.dateLimite).toLocaleDateString('fr-FR') : "N/A"
     };

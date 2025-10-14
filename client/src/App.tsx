@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSelector from "@/components/LanguageSelector";
 import Dashboard from "@/pages/Dashboard";
 import Chantiers from "@/pages/Chantiers";
+import Salaries from "@/pages/Salaries";
 import Equipements from "@/pages/Equipements";
 import Achats from "@/pages/Achats";
 import Finances from "@/pages/Finances";
@@ -24,7 +25,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/chantiers" component={Chantiers} />
-      <Route path="/salaries" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.salaries')} - {t('common.inDevelopment')}</h1></div>} />
+      <Route path="/salaries" component={Salaries} />
       <Route path="/equipements" component={Equipements} />
       <Route path="/planning" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.planning')} - {t('common.inDevelopment')}</h1></div>} />
       <Route path="/achats" component={Achats} />

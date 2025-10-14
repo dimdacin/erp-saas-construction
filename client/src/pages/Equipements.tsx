@@ -151,8 +151,14 @@ export default function Equipements() {
                 <tr className="border-b">
                   <th className="text-left p-3 font-medium">ID</th>
                   <th className="text-left p-3 font-medium">Modèle</th>
+                  <th className="text-left p-3 font-medium">Année</th>
                   <th className="text-left p-3 font-medium">Plaque</th>
+                  <th className="text-left p-3 font-medium">Carburant</th>
                   <th className="text-left p-3 font-medium">Conducteur</th>
+                  <th className="text-left p-3 font-medium">GPS/Compteur</th>
+                  <th className="text-left p-3 font-medium">Taux h.</th>
+                  <th className="text-left p-3 font-medium">Conso.</th>
+                  <th className="text-left p-3 font-medium">Maintenance</th>
                   <th className="text-left p-3 font-medium">{t('equipements.status')}</th>
                   <th className="text-left p-3 font-medium">{t('equipements.actions')}</th>
                 </tr>
@@ -165,9 +171,25 @@ export default function Equipements() {
                       <div className="text-sm text-muted-foreground">{equipement.type}</div>
                     </td>
                     <td className="p-3 text-sm">{equipement.modele || "-"}</td>
+                    <td className="p-3 text-sm">{equipement.year || <span className="text-muted-foreground">-</span>}</td>
                     <td className="p-3 text-sm font-mono">{equipement.immatriculation || "-"}</td>
-                    <td className="p-3 text-sm text-muted-foreground">
-                      -
+                    <td className="p-3 text-sm">{equipement.fuelType || <span className="text-muted-foreground">-</span>}</td>
+                    <td className="p-3 text-sm">
+                      {equipement.operatorName || <span className="text-muted-foreground">-</span>}
+                    </td>
+                    <td className="p-3 text-xs text-muted-foreground">
+                      {equipement.gpsUnit && <div>GPS: {equipement.gpsUnit}</div>}
+                      {equipement.meterUnit && <div>Cpt: {equipement.meterUnit}</div>}
+                      {!equipement.gpsUnit && !equipement.meterUnit && "-"}
+                    </td>
+                    <td className="p-3 text-sm font-mono">
+                      {equipement.hourlyRate !== undefined && equipement.hourlyRate !== null ? `${equipement.hourlyRate} lei` : <span className="text-muted-foreground">-</span>}
+                    </td>
+                    <td className="p-3 text-sm">
+                      {equipement.fuelConsumption !== undefined && equipement.fuelConsumption !== null ? `${equipement.fuelConsumption} L/100km` : <span className="text-muted-foreground">-</span>}
+                    </td>
+                    <td className="p-3 text-sm">
+                      {equipement.maintenanceCost !== undefined && equipement.maintenanceCost !== null ? `${equipement.maintenanceCost} lei/an` : <span className="text-muted-foreground">-</span>}
                     </td>
                     <td className="p-3">{getStatutBadge(equipement.statut)}</td>
                     <td className="p-3">
