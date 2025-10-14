@@ -8,6 +8,62 @@ The system is designed for construction and industrial businesses, offering feat
 
 ## Recent Changes
 
+**October 14, 2025 - Real Business Data Integration & Complete UI Adaptation**
+- Successfully imported and integrated real business data from client's Excel files
+- **Data Import Results:**
+  - 161 employees (salariés) imported from RH sheet
+  - 193 equipment items (équipements) imported from Meca sheet, 57 with assigned operators
+  - 6 construction projects (chantiers) imported from Chantier sheet
+- **Database Schema Extensions:**
+  - Extended `salaries` table with 7 organizational columns:
+    - `coastCenter` (text) - Cost center assignment
+    - `division` (text) - Division/department
+    - `services` (text) - Service line
+    - `codeFonction` (text) - Function code
+    - `inNum` (text) - Internal employee number
+    - `salaryMonth` (decimal 10,2) - Monthly salary
+    - `acordSup` (decimal 10,2) - Supplementary allowance
+  - Extended `equipements` table with 8 metadata columns:
+    - `year` (integer) - Manufacturing year
+    - `fuelType` (text) - Fuel type (Diesel, Electric, etc.)
+    - `gpsUnit` (text) - GPS unit identifier
+    - `meterUnit` (text) - Odometer/hour meter reading
+    - `hourlyRate` (decimal 10,2) - Hourly rate in lei
+    - `fuelConsumption` (decimal 10,2) - Fuel consumption L/100km
+    - `maintenanceCost` (decimal 10,2) - Annual maintenance cost in lei
+    - `operatorId` (FK → salaries.id) - Assigned driver/operator relationship
+  - Extended `chantiers` table with 9 project management columns:
+    - `codeProjet` (text) - Project code
+    - `beneficiaire` (text) - Project beneficiary/client
+    - `responsableId` (FK → salaries.id) - Project manager relationship
+    - Detailed budget breakdown (3 planned + 3 actual):
+      - `budgetMainDoeuvre` / `budgetReelMainDoeuvre` - Labor budget/actual
+      - `budgetMateriaux` / `budgetReelMateriaux` - Materials budget/actual
+      - `budgetEquipement` / `budgetReelEquipement` - Equipment budget/actual
+- **Intelligent Import Script (server/import-data.ts):**
+  - Smart name matching algorithm: splits full names, handles case variations
+  - Automatic operator-to-equipment relationship creation via name matching
+  - Column mapping from Excel structure to database schema
+  - Successful migration: `npm run db:push` applied all changes without --force flag
+- **Complete UI Implementation:**
+  - **New Salaries Page (client/src/pages/Salaries.tsx):**
+    - Displays all imported employee data with organizational structure
+    - Columns: Name, Function, Division, Service, Cost Center, Hourly Rate, inNum, codeFonction
+    - Full internationalization (FR/RU/RO)
+  - **Updated Equipements Page:**
+    - Extended to show ALL metadata columns: ID, Model, Year, Plate, Fuel Type, Driver, GPS/Meter, Hourly Rate, Fuel Consumption, **Maintenance Cost**
+    - Displays operator relationships (linked via operatorId FK)
+  - **Enhanced Chantiers/ProjectsTable:**
+    - Shows project code, beneficiary, detailed budget breakdown
+    - Budget columns display: MDO (labor), Matériaux (materials), Équipement (equipment)
+    - Each budget column shows planned (line 1) and actual (line 2, greyed)
+    - Project manager relationship displayed via responsableId FK
+- **Critical Zero-Value Fix:**
+  - All numeric fields use `!== undefined && !== null` checks instead of truthy checks
+  - Ensures legitimate zero values (€0 budgets, 0 lei rates, etc.) are displayed correctly
+  - Applied across: Equipements table, ProjectsTable, Chantiers mapper
+  - Guarantees complete budget transparency and data accuracy
+
 **October 2025 - Purchase Reception Workflow (Achat/Stocks)**
 - Implemented complete purchase reception workflow with operator validation and invoice photo attachments
 - Extended `depenses` table schema with reception tracking fields:
