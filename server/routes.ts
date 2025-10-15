@@ -8,11 +8,46 @@ import {
   insertChantierSchema, insertSalarieSchema, insertEquipementSchema,
   insertAffectationSalarieSchema, insertAffectationEquipementSchema, insertDepenseSchema
 } from "@shared/schema";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // ========== ADMIN: PURGE DONNÉES ==========
+  app.post("/api/admin/truncate", async (req, res) => {
+    try {
+      // entities peut être 'all' ou une liste séparée par des virgules
+      const entitiesParam = (req.query.entities as string | undefined) || 'all';
+      const allowed = new Set(['chantiers','salaries','equipements']);
+
+      let targets: string[];
+      if (entitiesParam === 'all') {
+        targets = ['chantiers','salaries','equipements'];
+      } else {
+        targets = entitiesParam
+          .split(',')
+          .map(s => s.trim().toLowerCase())
+          .filter(s => allowed.has(s));
+      }
+
+      if (targets.length === 0) {
+        return res.status(400).json({ error: "Aucune entité valide fournie. Utilisez 'all' ou une liste parmi: chantiers,salaries,equipements" });
+      }
+
+      // Construire la requête TRUNCATE en whitelistant les tables
+      const tableNames = targets.join(', ');
+      const query = `TRUNCATE TABLE ${tableNames} RESTART IDENTITY CASCADE;`;
+      await db.execute(sql.raw(query));
+
+      return res.status(200).json({ success: true, truncated: targets });
+    } catch (error: any) {
+      console.error('Erreur TRUNCATE:', error);
+      return res.status(500).json({ success: false, error: error.message || 'Erreur inconnue' });
+    }
+  });
+
   // ========== CHANTIERS ROUTES ==========
   app.get("/api/chantiers", async (req, res) => {
     try {
@@ -437,6 +472,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log('Fichier reçu:', req.file.originalname, 'Taille:', req.file.size);
+      const mode = (req.query.mode as string | undefined) || 'append';
+
+      // Mode replace: purge avant import
+      if (mode === 'replace') {
+        await db.execute(sql.raw('TRUNCATE TABLE equipements RESTART IDENTITY CASCADE;'));
+      }
       
       const equipements = parseExcelToEquipements(req.file.buffer);
       console.log('Équipements détectés:', equipements.length);
@@ -515,6 +556,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log('Début import chantiers Excel:', req.file.originalname);
+      const mode = (req.query.mode as string | undefined) || 'append';
+
+      if (mode === 'replace') {
+        await db.execute(sql.raw('TRUNCATE TABLE chantiers RESTART IDENTITY CASCADE;'));
+      }
       
       const chantiers = parseExcelToChantiers(req.file.buffer);
       console.log('Chantiers parsés:', chantiers.length);
@@ -558,6 +604,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log('Début import salariés Excel:', req.file.originalname);
+      const mode = (req.query.mode as string | undefined) || 'append';
+
+      if (mode === 'replace') {
+        await db.execute(sql.raw('TRUNCATE TABLE salaries RESTART IDENTITY CASCADE;'));
+      }
       
       const salaries = parseExcelToSalaries(req.file.buffer);
       console.log('Salariés parsés:', salaries.length);

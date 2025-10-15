@@ -120,11 +120,23 @@ class MockStorage implements IStorage {
   }
 
   async createChantier(chantier: InsertChantier): Promise<Chantier> {
+    const base = { id: this.generateId(), createdAt: new Date(), ...chantier } as InsertChantier & { id: string; createdAt: Date };
     const newChantier: Chantier = { 
-      id: this.generateId(), 
-      createdAt: new Date(), 
-      updatedAt: new Date(),
-      ...chantier 
+      ...base,
+      codeProjet: base.codeProjet ?? null,
+      beneficiaire: base.beneficiaire ?? null,
+      responsableId: base.responsableId ?? null,
+      budgetMainDoeuvre: base.budgetMainDoeuvre ?? null,
+      budgetMateriaux: base.budgetMateriaux ?? null,
+      budgetEquipement: base.budgetEquipement ?? null,
+      budgetRealise: '0',
+      budgetReelMainDoeuvre: base.budgetReelMainDoeuvre ?? null,
+      budgetReelMateriaux: base.budgetReelMateriaux ?? null,
+      budgetReelEquipement: base.budgetReelEquipement ?? null,
+      progression: 0,
+      dateDebut: base.dateDebut ?? null,
+      dateLimite: base.dateLimite ?? null,
+      description: base.description ?? null,
     };
     this.mockData.chantiers.push(newChantier);
     return newChantier;
@@ -136,8 +148,7 @@ class MockStorage implements IStorage {
     
     this.mockData.chantiers[index] = { 
       ...this.mockData.chantiers[index], 
-      ...chantier, 
-      updatedAt: new Date() 
+      ...chantier
     };
     return this.mockData.chantiers[index];
   }
@@ -162,7 +173,18 @@ class MockStorage implements IStorage {
     const newSalarie: Salarie = { 
       id: this.generateId(), 
       createdAt: new Date(), 
-      updatedAt: new Date(),
+      statut: salarie.statut ?? 'disponible',
+      competences: salarie.competences ?? null,
+      telephone: salarie.telephone ?? null,
+      email: salarie.email ?? null,
+      tauxHoraire: salarie.tauxHoraire ?? null,
+      coastCenter: salarie.coastCenter ?? null,
+      division: salarie.division ?? null,
+      services: salarie.services ?? null,
+      codeFonction: salarie.codeFonction ?? null,
+      inNum: salarie.inNum ?? null,
+      salaryMonth: salarie.salaryMonth ?? null,
+      acordSup: salarie.acordSup ?? null,
       ...salarie 
     };
     this.mockData.salaries.push(newSalarie);
@@ -175,8 +197,7 @@ class MockStorage implements IStorage {
     
     this.mockData.salaries[index] = { 
       ...this.mockData.salaries[index], 
-      ...salarie, 
-      updatedAt: new Date() 
+      ...salarie
     };
     return this.mockData.salaries[index];
   }
@@ -201,7 +222,26 @@ class MockStorage implements IStorage {
     const newEquipement: Equipement = { 
       id: this.generateId(), 
       createdAt: new Date(), 
-      updatedAt: new Date(),
+      statut: equipement.statut ?? 'disponible',
+      categorie: equipement.categorie ?? null,
+      marque: equipement.marque ?? null,
+      modele: equipement.modele ?? null,
+      numeroSerie: equipement.numeroSerie ?? null,
+      immatriculation: equipement.immatriculation ?? null,
+      localisation: equipement.localisation ?? null,
+      dateAchat: equipement.dateAchat ?? null,
+      coutJournalier: equipement.coutJournalier ?? null,
+      consommationGasoilHeure: equipement.consommationGasoilHeure ?? null,
+      salaireHoraireOperateur: equipement.salaireHoraireOperateur ?? null,
+      operatorId: equipement.operatorId ?? null,
+      operatorName: equipement.operatorName ?? null,
+      year: equipement.year ?? null,
+      fuelType: equipement.fuelType ?? null,
+      gpsUnit: equipement.gpsUnit ?? null,
+      meterUnit: equipement.meterUnit ?? null,
+      hourlyRate: equipement.hourlyRate ?? null,
+      fuelConsumption: equipement.fuelConsumption ?? null,
+      maintenanceCost: equipement.maintenanceCost ?? null,
       ...equipement 
     };
     this.mockData.equipements.push(newEquipement);
@@ -214,8 +254,7 @@ class MockStorage implements IStorage {
     
     this.mockData.equipements[index] = { 
       ...this.mockData.equipements[index], 
-      ...equipement, 
-      updatedAt: new Date() 
+      ...equipement
     };
     return this.mockData.equipements[index];
   }
@@ -231,7 +270,7 @@ class MockStorage implements IStorage {
   async getAllAffectationsSalaries(): Promise<AffectationSalarie[]> { return []; }
   async getAffectationSalarie(id: string): Promise<AffectationSalarie | undefined> { return undefined; }
   async createAffectationSalarie(affectation: InsertAffectationSalarie): Promise<AffectationSalarie> {
-    return { id: this.generateId(), createdAt: new Date(), updatedAt: new Date(), ...affectation };
+    return { id: this.generateId(), createdAt: new Date(), notes: affectation.notes ?? null, ...affectation };
   }
   async updateAffectationSalarie(id: string, affectation: Partial<InsertAffectationSalarie>): Promise<AffectationSalarie | undefined> { return undefined; }
   async deleteAffectationSalarie(id: string): Promise<void> {}
@@ -239,7 +278,7 @@ class MockStorage implements IStorage {
   async getAllAffectationsEquipements(): Promise<AffectationEquipement[]> { return []; }
   async getAffectationEquipement(id: string): Promise<AffectationEquipement | undefined> { return undefined; }
   async createAffectationEquipement(affectation: InsertAffectationEquipement): Promise<AffectationEquipement> {
-    return { id: this.generateId(), createdAt: new Date(), updatedAt: new Date(), ...affectation };
+    return { id: this.generateId(), createdAt: new Date(), notes: affectation.notes ?? null, ...affectation };
   }
   async updateAffectationEquipement(id: string, affectation: Partial<InsertAffectationEquipement>): Promise<AffectationEquipement | undefined> { return undefined; }
   async deleteAffectationEquipement(id: string): Promise<void> {}
@@ -247,7 +286,20 @@ class MockStorage implements IStorage {
   async getAllDepenses(): Promise<Depense[]> { return []; }
   async getDepense(id: string): Promise<Depense | undefined> { return undefined; }
   async createDepense(depense: InsertDepense): Promise<Depense> {
-    return { id: this.generateId(), createdAt: new Date(), updatedAt: new Date(), ...depense };
+    return { 
+      id: this.generateId(), 
+      createdAt: new Date(), 
+      statutReception: 'en_attente',
+      dateReception: null,
+      operateurReception: null,
+      photoFacturePath: null,
+      niveau: depense.niveau ?? 'chantier',
+      quantite: depense.quantite ?? null,
+      facture: depense.facture ?? null,
+      stockItemId: depense.stockItemId ?? null,
+      chantierId: depense.chantierId ?? null,
+      ...depense 
+    };
   }
   async updateDepense(id: string, depense: Partial<InsertDepense>): Promise<Depense | undefined> { return undefined; }
   async deleteDepense(id: string): Promise<void> {}
@@ -255,7 +307,7 @@ class MockStorage implements IStorage {
   async getAllUsines(): Promise<Usine[]> { return []; }
   async getUsine(id: string): Promise<Usine | undefined> { return undefined; }
   async createUsine(usine: InsertUsine): Promise<Usine> {
-    return { id: this.generateId(), createdAt: new Date(), updatedAt: new Date(), ...usine };
+    return { id: this.generateId(), createdAt: new Date(), localisation: usine.localisation ?? null, ...usine };
   }
   async updateUsine(id: string, usine: Partial<InsertUsine>): Promise<Usine | undefined> { return undefined; }
   async deleteUsine(id: string): Promise<void> {}
@@ -263,7 +315,15 @@ class MockStorage implements IStorage {
   async getAllStockItems(): Promise<StockItem[]> { return []; }
   async getStockItem(id: string): Promise<StockItem | undefined> { return undefined; }
   async createStockItem(stockItem: InsertStockItem): Promise<StockItem> {
-    return { id: this.generateId(), createdAt: new Date(), updatedAt: new Date(), ...stockItem };
+    return { 
+      id: this.generateId(), 
+      createdAt: new Date(), 
+      categorie: stockItem.categorie ?? null,
+      quantite: stockItem.quantite ?? '0',
+      usineId: stockItem.usineId ?? null,
+      unite: stockItem.unite ?? null,
+      ...stockItem 
+    };
   }
   async updateStockItem(id: string, stockItem: Partial<InsertStockItem>): Promise<StockItem | undefined> { return undefined; }
   async deleteStockItem(id: string): Promise<void> {}

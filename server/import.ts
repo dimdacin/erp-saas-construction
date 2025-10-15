@@ -10,6 +10,15 @@ export interface ExcelMapping {
   salaireOperateur?: string;
   marque?: string;
   type?: string;
+  year?: string;
+  status?: string;
+  operatorName?: string;
+  gpsUnit?: string;
+  meterUnit?: string;
+  fuelType?: string;
+  hourlyRate?: string;
+  fuelConsumption?: string;
+  maintenanceCost?: string;
   valeurBien?: string;
   amortissement?: string;
 }
@@ -74,6 +83,15 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
     type: columnNames.find(col => 
       col.toLowerCase().includes('type') && !col.toLowerCase().includes('categ')
     ),
+    year: columnNames.find(col => col.toLowerCase() === 'year' || col.toLowerCase().includes('annee')),
+    status: columnNames.find(col => col.toLowerCase() === 'status' || col.toLowerCase().includes('statut')),
+    operatorName: columnNames.find(col => col.toLowerCase().includes('operator_name') || col.toLowerCase().includes('operateur')),
+    gpsUnit: columnNames.find(col => col.toLowerCase().includes('gps')),
+    meterUnit: columnNames.find(col => col.toLowerCase().includes('meter')),
+    fuelType: columnNames.find(col => col.toLowerCase().includes('fuel_type') || col.toLowerCase().includes('carburant')),
+    hourlyRate: columnNames.find(col => col.toLowerCase().includes('hourly_rate') || col.toLowerCase().includes('tarif_horaire')),
+    fuelConsumption: columnNames.find(col => col.toLowerCase().includes('fuel_consumption')),
+    maintenanceCost: columnNames.find(col => col.toLowerCase().includes('maintenance_cost') || col.toLowerCase().includes('maintenance')),
   };
 
   const finalMapping = { ...autoMapping, ...mapping };
@@ -89,19 +107,30 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
       const immatriculation = finalMapping.immatriculation ? String(row[finalMapping.immatriculation] || '') : '';
       const marque = finalMapping.marque ? String(row[finalMapping.marque] || '') : '';
       const type = finalMapping.type ? String(row[finalMapping.type] || categorie) : categorie;
+      const year = finalMapping.year ? parseInt(String(row[finalMapping.year]).replace(/[^\d-]/g, '')) || null : null;
+      const operatorName = finalMapping.operatorName ? String(row[finalMapping.operatorName] || '') : '';
+      const gpsUnit = finalMapping.gpsUnit ? String(row[finalMapping.gpsUnit] || '') : '';
+      const meterUnit = finalMapping.meterUnit ? String(row[finalMapping.meterUnit] || '') : '';
+      const fuelType = finalMapping.fuelType ? String(row[finalMapping.fuelType] || '') : '';
 
       // Consommation et salaire - convertir en nombres
       const consommationStr = finalMapping.consommation ? String(row[finalMapping.consommation] || '0') : '0';
       const salaireStr = finalMapping.salaireOperateur ? String(row[finalMapping.salaireOperateur] || '0') : '0';
+      const hourlyRateStr = finalMapping.hourlyRate ? String(row[finalMapping.hourlyRate] || '0') : '0';
+      const fuelConsumptionStr = finalMapping.fuelConsumption ? String(row[finalMapping.fuelConsumption] || '0') : '0';
+      const maintenanceCostStr = finalMapping.maintenanceCost ? String(row[finalMapping.maintenanceCost] || '0') : '0';
       
       const consommation = parseFloat(consommationStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
       const salaire = parseFloat(salaireStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
+      const hourlyRate = parseFloat(hourlyRateStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
+      const fuelConsumption = parseFloat(fuelConsumptionStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
+      const maintenanceCost = parseFloat(maintenanceCostStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
 
       // Construire le nom de l'équipement
       const nom = idMachine || modele || `Équipement ${index + 1}`;
 
       // Déterminer le statut (mapping du format standardisé)
-      const statusFromExcel = row['status'] || '';
+      const statusFromExcel = finalMapping.status ? row[finalMapping.status] : (row['status'] || '');
       let statut = 'disponible';
       if (statusFromExcel.toLowerCase() === 'active') {
         statut = 'disponible';
@@ -125,6 +154,14 @@ export function parseExcelToEquipements(fileBuffer: Buffer, mapping?: ExcelMappi
         coutJournalier: null,
         consommationGasoilHeure: consommation ? String(consommation) : null,
         salaireHoraireOperateur: salaire ? String(salaire) : null,
+        operatorName: operatorName || null,
+        year: year,
+        fuelType: fuelType || null,
+        gpsUnit: gpsUnit || null,
+        meterUnit: meterUnit || null,
+        hourlyRate: hourlyRate ? String(hourlyRate) : null,
+        fuelConsumption: fuelConsumption ? String(fuelConsumption) : null,
+        maintenanceCost: maintenanceCost ? String(maintenanceCost) : null,
       };
 
       return equipement;
@@ -168,6 +205,9 @@ export interface SalariesMapping {
   codeFonction?: string;
   inNum?: string;
   salaryMonth?: string;
+  salaryTarif?: string; // alias: salary_tarif
+  salaryH?: string; // alias: Salary_h
+  acordSup?: string; // alias: Acord_sup
 }
 
 export function parseExcelToChantiers(fileBuffer: Buffer, mapping?: ChantiersMapping): InsertChantier[] {
@@ -192,12 +232,14 @@ export function parseExcelToChantiers(fileBuffer: Buffer, mapping?: ChantiersMap
   const autoMapping: ChantiersMapping = {
     codeProjet: columnNames.find(col => 
       col.toLowerCase().includes('code') || 
-      col.toLowerCase().includes('ref')
+      col.toLowerCase().includes('ref') ||
+      (col.toLowerCase().includes('id') && col.toLowerCase().includes('chantier'))
     ),
     nom: columnNames.find(col => 
       col.toLowerCase().includes('nom') || 
       col.toLowerCase().includes('title') ||
-      col.toLowerCase().includes('projet')
+      col.toLowerCase().includes('projet') ||
+      col.toLowerCase().includes('denomination')
     ),
     beneficiaire: columnNames.find(col => 
       col.toLowerCase().includes('client') || 
@@ -208,8 +250,8 @@ export function parseExcelToChantiers(fileBuffer: Buffer, mapping?: ChantiersMap
       col.toLowerCase().includes('status')
     ),
     budgetPrevisionnel: columnNames.find(col => 
-      col.toLowerCase().includes('budget') && 
-      (col.toLowerCase().includes('total') || col.toLowerCase().includes('prev'))
+      (col.toLowerCase().includes('budget') && (col.toLowerCase().includes('total') || col.toLowerCase().includes('prev'))) ||
+      (col.toLowerCase().includes('montant') && (col.toLowerCase().includes('contrat') || col.toLowerCase().includes('tva')))
     ),
     dateDebut: columnNames.find(col => 
       col.toLowerCase().includes('debut') || 
@@ -258,11 +300,9 @@ export function parseExcelToChantiers(fileBuffer: Buffer, mapping?: ChantiersMap
         budgetMainDoeuvre: null,
         budgetMateriaux: null,
         budgetEquipement: null,
-        budgetRealise: "0",
         budgetReelMainDoeuvre: null,
         budgetReelMateriaux: null,
         budgetReelEquipement: null,
-        progression: 0,
         dateDebut: null, // Sera parsé si présent
         dateLimite: null, // Sera parsé si présent
         description,
@@ -352,6 +392,9 @@ export function parseExcelToSalaries(fileBuffer: Buffer, mapping?: SalariesMappi
       col.toLowerCase().includes('numero') ||
       col.toLowerCase().includes('id')
     ),
+    salaryTarif: columnNames.find(col => col.toLowerCase().includes('salary_tarif') || col.toLowerCase().includes('tarif')),
+    salaryH: columnNames.find(col => col.toLowerCase().includes('salary_h') || (col.toLowerCase().includes('salaire') && col.toLowerCase().includes('h'))),
+    acordSup: columnNames.find(col => col.toLowerCase().includes('acord') || col.toLowerCase().includes('accord')),
   };
 
   const finalMapping = { ...autoMapping, ...mapping };
@@ -371,12 +414,20 @@ export function parseExcelToSalaries(fileBuffer: Buffer, mapping?: SalariesMappi
       }
 
       // Taux horaire
-      const tauxStr = finalMapping.tauxHoraire ? String(row[finalMapping.tauxHoraire] || '0') : '0';
+      const tauxStr = finalMapping.tauxHoraire 
+        ? String(row[finalMapping.tauxHoraire] || '0')
+        : (finalMapping.salaryTarif ? String(row[finalMapping.salaryTarif] || '0') : '0');
       const tauxHoraire = parseFloat(tauxStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
 
       // Salaire mensuel
-      const salaireStr = finalMapping.salaryMonth ? String(row[finalMapping.salaryMonth] || '0') : '0';
+      const salaireStr = finalMapping.salaryMonth 
+        ? String(row[finalMapping.salaryMonth] || '0')
+        : (finalMapping.salaryH ? String(row[finalMapping.salaryH] || '0') : '0');
       const salaryMonth = parseFloat(salaireStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
+
+      // Acord_sup
+      const acordSupStr = finalMapping.acordSup ? String(row[finalMapping.acordSup] || '0') : '0';
+      const acordSup = parseFloat(acordSupStr.replace(',', '.').replace(/[^\d.-]/g, '')) || null;
 
       const salarie: InsertSalarie = {
         nom,
@@ -393,25 +444,7 @@ export function parseExcelToSalaries(fileBuffer: Buffer, mapping?: SalariesMappi
         codeFonction: finalMapping.codeFonction ? String(row[finalMapping.codeFonction] || '') : null,
         inNum: finalMapping.inNum ? String(row[finalMapping.inNum] || '') : null,
         salaryMonth: salaryMonth ? String(salaryMonth) : null,
-        acordSup: null,
-        socialSecurityNumber: null,
-        bankAccountNumber: null,
-        nationality: null,
-        dateOfBirth: null,
-        placeOfBirth: null,
-        maritalStatus: null,
-        numberOfChildren: null,
-        emergencyContactName: null,
-        emergencyContactPhone: null,
-        hireDate: null,
-        endDate: null,
-        contractType: null,
-        workingHours: null,
-        vacationDays: null,
-        sickDays: null,
-        trainingRecord: null,
-        performanceRating: null,
-        notes: null,
+  acordSup: acordSup ? String(acordSup) : null,
       };
 
       return salarie;
