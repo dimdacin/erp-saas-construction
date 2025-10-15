@@ -11,6 +11,8 @@ import type {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import AddFactoryDataDialog from "./AddFactoryDataDialog";
+import ImportFactoryDataDialog from "./ImportFactoryDataDialog";
+import ExportFactoryDataButton from "./ExportFactoryDataButton";
 
 interface FactoryDashboardProps {
   selectedDate?: string;
@@ -79,7 +81,11 @@ export default function FactoryDashboard({ selectedDate = format(new Date(), 'yy
             Données du {format(new Date(selectedDate), 'dd/MM/yyyy')}
           </p>
         </div>
-        <AddFactoryDataDialog />
+        <div className="flex gap-2">
+          <ExportFactoryDataButton selectedDate={selectedDate} />
+          <ImportFactoryDataDialog />
+          <AddFactoryDataDialog />
+        </div>
       </div>
 
       {usines.map((usine) => {

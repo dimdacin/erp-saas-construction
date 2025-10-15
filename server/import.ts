@@ -456,3 +456,70 @@ export function parseExcelToSalaries(fileBuffer: Buffer, mapping?: SalariesMappi
 
   return salaries.filter(sal => sal.nom && sal.prenom);
 }
+
+// Factory Data Import Functions
+export interface FactoryDataImportResult {
+  consommations: any[];
+  productions: any[];
+  affectations: any[];
+}
+
+export function parseExcelToFactoryData(fileBuffer: Buffer): FactoryDataImportResult {
+  const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+  
+  const result: FactoryDataImportResult = {
+    consommations: [],
+    productions: [],
+    affectations: []
+  };
+
+  // Parse Consommations sheet
+  const consommationsSheet = workbook.SheetNames.find(name => 
+    name.toLowerCase().includes('consommation') || name.toLowerCase() === 'conso'
+  );
+  if (consommationsSheet) {
+    const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[consommationsSheet]);
+    result.consommations = data.map(row => ({
+      usineId: row.usineId || row.UsineId || row.usine_id,
+      date: row.date || row.Date,
+      consommationElectrique: row.consommationElectrique || row.electrique || row.Electrique || row['Électrique (kWh)'],
+      consommationGaz: row.consommationGaz || row.gaz || row.Gaz || row['Gaz (kWh)'],
+      unite: row.unite || row.Unite || 'kWh'
+    })).filter(c => c.usineId && c.date);
+  }
+
+  // Parse Productions sheet
+  const productionsSheet = workbook.SheetNames.find(name => 
+    name.toLowerCase().includes('production') || name.toLowerCase() === 'prod'
+  );
+  if (productionsSheet) {
+    const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[productionsSheet]);
+    result.productions = data.map(row => ({
+      usineId: row.usineId || row.UsineId || row.usine_id,
+      date: row.date || row.Date,
+      typeMarchandise: row.typeMarchandise || row['Type Marchandise'] || row.type || row.Type,
+      tonnesRecues: row.tonnesRecues || row['Tonnes Reçues'] || row.recues || row.Recues,
+      tonnesVendues: row.tonnesVendues || row['Tonnes Vendues'] || row.vendues || row.Vendues,
+      clientNom: row.clientNom || row.client || row.Client,
+      notes: row.notes || row.Notes
+    })).filter(p => p.usineId && p.date && p.typeMarchandise);
+  }
+
+  // Parse Affectations sheet
+  const affectationsSheet = workbook.SheetNames.find(name => 
+    name.toLowerCase().includes('affectation') || name.toLowerCase().includes('personnel')
+  );
+  if (affectationsSheet) {
+    const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[affectationsSheet]);
+    result.affectations = data.map(row => ({
+      usineId: row.usineId || row.UsineId || row.usine_id,
+      salarieId: row.salarieId || row.SalarieId || row.salarie_id,
+      date: row.date || row.Date,
+      heuresParJour: row.heuresParJour || row['Heures/Jour'] || row.heures || row.Heures || '8',
+      notes: row.notes || row.Notes
+    })).filter(a => a.usineId && a.salarieId && a.date);
+  }
+
+  return result;
+}
+
