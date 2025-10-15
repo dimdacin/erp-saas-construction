@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
 import * as XLSX from 'xlsx';
-import { parseExcelToEquipements, parseExcelToChantiers, parseExcelToSalaries } from "./import";
+import { parseExcelToEquipements, parseExcelToChantiers, parseExcelToSalaries, parseExcelToFactoryData } from "./import";
 import { 
   insertChantierSchema, insertSalarieSchema, insertEquipementSchema,
   insertAffectationSalarieSchema, insertAffectationEquipementSchema, insertDepenseSchema
@@ -641,6 +641,317 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         error: error.message || 'Erreur inconnue lors de l\'import' 
       });
+    }
+  });
+
+  // ========== FACTORY DATA EXPORT ==========
+  app.get("/api/factory-data/export", async (req, res) => {
+    try {
+      const format = (req.query.format as string) || 'excel';
+      const date = req.query.date as string;
+
+      let consommations, productions, affectations;
+
+      if (date) {
+        consommations = await storage.getUsineConsommationsByDate(date);
+        productions = await storage.getUsineProductionsByDate(date);
+        affectations = await storage.getUsineAffectationsSalariesByDate(date);
+      } else {
+        consommations = await storage.getAllUsineConsommations();
+        productions = await storage.getAllUsineProductions();
+        affectations = await storage.getAllUsineAffectationsSalaries();
+      }
+
+      if (format === 'json') {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="factory-data-${date || 'all'}.json"`);
+        return res.json({
+          consommations,
+          productions,
+          affectations
+        });
+      }
+
+      if (format === 'csv') {
+        // Simple CSV export for consommations
+        const csvLines = [
+          'Type,Usine ID,Date,Consommation Electrique,Consommation Gaz,Unite',
+          ...consommations.map(c => `Consommation,${c.usineId},${c.date},${c.consommationElectrique || ''},${c.consommationGaz || ''},${c.unite || ''}`),
+          '',
+          'Type,Usine ID,Date,Type Marchandise,Tonnes Recues,Tonnes Vendues,Client',
+          ...productions.map(p => `Production,${p.usineId},${p.date},${p.typeMarchandise},${p.tonnesRecues || ''},${p.tonnesVendues || ''},${p.clientNom || ''}`),
+          '',
+          'Type,Usine ID,Salarie ID,Date,Heures Par Jour',
+          ...affectations.map(a => `Affectation,${a.usineId},${a.salarieId},${a.date},${a.heuresParJour}`)
+        ];
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="factory-data-${date || 'all'}.csv"`);
+        return res.send(csvLines.join('\n'));
+      }
+
+      // Excel format (default)
+      const workbook = XLSX.utils.book_new();
+      
+      // Consommations sheet
+      const consommationsSheet = XLSX.utils.json_to_sheet(consommations.map(c => ({
+        'Usine ID': c.usineId,
+        'Date': c.date,
+        'Consommation Electrique': c.consommationElectrique,
+        'Consommation Gaz': c.consommationGaz,
+        'Unite': c.unite
+      })));
+      XLSX.utils.book_append_sheet(workbook, consommationsSheet, 'Consommations');
+      
+      // Productions sheet
+      const productionsSheet = XLSX.utils.json_to_sheet(productions.map(p => ({
+        'Usine ID': p.usineId,
+        'Date': p.date,
+        'Type Marchandise': p.typeMarchandise,
+        'Tonnes Recues': p.tonnesRecues,
+        'Tonnes Vendues': p.tonnesVendues,
+        'Client': p.clientNom,
+        'Notes': p.notes
+      })));
+      XLSX.utils.book_append_sheet(workbook, productionsSheet, 'Productions');
+      
+      // Affectations sheet
+      const affectationsSheet = XLSX.utils.json_to_sheet(affectations.map(a => ({
+        'Usine ID': a.usineId,
+        'Salarie ID': a.salarieId,
+        'Date': a.date,
+        'Heures Par Jour': a.heuresParJour,
+        'Notes': a.notes
+      })));
+      XLSX.utils.book_append_sheet(workbook, affectationsSheet, 'Affectations');
+      
+      const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="factory-data-${date || 'all'}.xlsx"`);
+      return res.send(buffer);
+    } catch (error: any) {
+      console.error('Erreur lors de l\'export:', error);
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Erreur inconnue lors de l\'export' 
+      });
+    }
+  });
+
+  // ========== FACTORY DATA IMPORT ==========
+  app.post("/api/factory-data/import", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: 'Aucun fichier fourni' });
+      }
+
+      console.log('Début import factory data Excel:', req.file.originalname);
+      const mode = (req.query.mode as string | undefined) || 'append';
+
+      if (mode === 'replace') {
+        await db.execute(sql.raw('TRUNCATE TABLE usine_consommations, usine_productions, usine_affectations_salaries RESTART IDENTITY CASCADE;'));
+      }
+      
+      const factoryData = parseExcelToFactoryData(req.file.buffer);
+      console.log('Factory data parsé:', {
+        consommations: factoryData.consommations.length,
+        productions: factoryData.productions.length,
+        affectations: factoryData.affectations.length
+      });
+
+      let totalImported = 0;
+      const errors = [];
+
+      // Import consommations
+      for (const conso of factoryData.consommations) {
+        try {
+          await storage.createUsineConsommation(conso);
+          totalImported++;
+        } catch (error: any) {
+          console.error('Erreur insertion consommation:', error);
+          errors.push({ type: 'consommation', data: conso, error: error.message });
+        }
+      }
+
+      // Import productions
+      for (const prod of factoryData.productions) {
+        try {
+          await storage.createUsineProduction(prod);
+          totalImported++;
+        } catch (error: any) {
+          console.error('Erreur insertion production:', error);
+          errors.push({ type: 'production', data: prod, error: error.message });
+        }
+      }
+
+      // Import affectations
+      for (const aff of factoryData.affectations) {
+        try {
+          await storage.createUsineAffectationSalarie(aff);
+          totalImported++;
+        } catch (error: any) {
+          console.error('Erreur insertion affectation:', error);
+          errors.push({ type: 'affectation', data: aff, error: error.message });
+        }
+      }
+
+      console.log('Import factory data terminé:', totalImported, 'importés');
+
+      return res.status(200).json({ 
+        success: true, 
+        imported: totalImported,
+        details: {
+          consommations: factoryData.consommations.length,
+          productions: factoryData.productions.length,
+          affectations: factoryData.affectations.length
+        },
+        errors: errors.length > 0 ? errors : undefined
+      });
+    } catch (error: any) {
+      console.error('Erreur lors de l\'import Excel factory data:', error);
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Erreur inconnue lors de l\'import' 
+      });
+    }
+  });
+
+  // ========== USINE CONSOMMATIONS ROUTES ==========
+  app.get("/api/usine-consommations", async (req, res) => {
+    try {
+      const consommations = await storage.getAllUsineConsommations();
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.get("/api/usine-consommations/usine/:usineId", async (req, res) => {
+    try {
+      const consommations = await storage.getUsineConsommationsByUsine(req.params.usineId);
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.get("/api/usine-consommations/date/:date", async (req, res) => {
+    try {
+      const consommations = await storage.getUsineConsommationsByDate(req.params.date);
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.post("/api/usine-consommations", async (req, res) => {
+    try {
+      const consommation = await storage.createUsineConsommation(req.body);
+      res.status(201).json(consommation);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid consommation data" });
+    }
+  });
+
+  app.delete("/api/usine-consommations/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineConsommation(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete consommation" });
+    }
+  });
+
+  // ========== USINE PRODUCTIONS ROUTES ==========
+  app.get("/api/usine-productions", async (req, res) => {
+    try {
+      const productions = await storage.getAllUsineProductions();
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.get("/api/usine-productions/usine/:usineId", async (req, res) => {
+    try {
+      const productions = await storage.getUsineProductionsByUsine(req.params.usineId);
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.get("/api/usine-productions/date/:date", async (req, res) => {
+    try {
+      const productions = await storage.getUsineProductionsByDate(req.params.date);
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.post("/api/usine-productions", async (req, res) => {
+    try {
+      const production = await storage.createUsineProduction(req.body);
+      res.status(201).json(production);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid production data" });
+    }
+  });
+
+  app.delete("/api/usine-productions/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineProduction(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete production" });
+    }
+  });
+
+  // ========== USINE AFFECTATIONS SALARIES ROUTES ==========
+  app.get("/api/usine-affectations-salaries", async (req, res) => {
+    try {
+      const affectations = await storage.getAllUsineAffectationsSalaries();
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.get("/api/usine-affectations-salaries/usine/:usineId", async (req, res) => {
+    try {
+      const affectations = await storage.getUsineAffectationsSalariesByUsine(req.params.usineId);
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.get("/api/usine-affectations-salaries/date/:date", async (req, res) => {
+    try {
+      const affectations = await storage.getUsineAffectationsSalariesByDate(req.params.date);
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.post("/api/usine-affectations-salaries", async (req, res) => {
+    try {
+      const affectation = await storage.createUsineAffectationSalarie(req.body);
+      res.status(201).json(affectation);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid affectation data" });
+    }
+  });
+
+  app.delete("/api/usine-affectations-salaries/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineAffectationSalarie(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete affectation" });
     }
   });
 

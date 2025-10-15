@@ -87,6 +87,25 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 - Catégorisation des coûts
 - Rapports budgétaires avec comparaison prévisionnel/réel
 
+### 🏭 Tableau de bord Usines
+
+- **Consommations énergétiques** :
+  - Suivi consommation électrique (kWh/MWh)
+  - Suivi consommation gaz (kWh/m³)
+  - Historique par date et par usine
+- **Production** :
+  - Tonnes reçues par type de marchandise
+  - Tonnes vendues avec tracking client
+  - Analyse par type de produit (Béton, Acier, Gravier, etc.)
+- **Affectations Personnel** :
+  - Salariés affectés du jour
+  - Heures travaillées par employé
+  - Notes et observations
+- **Import/Export** :
+  - Import Excel structuré (Consommations, Productions, Affectations)
+  - Export multi-format (Excel, CSV, JSON)
+  - Saisie opérateur via formulaires
+
 ### 📅 Planning
 
 - Affectation salariés → chantiers (dates, heures/jour)
@@ -252,6 +271,18 @@ npx tsx server/import-data.ts
 **Feuille Chantier (Projets)** :
 | Code projet | Nom | Bénéficiaire | Responsable | Budget MDO | Budget Matériaux | ...
 |-------------|-----|--------------|-------------|------------|------------------|
+
+**Feuille Consommations (Usines)** :
+| Usine ID | Date | Électrique (kWh) | Gaz (kWh) | Unite |
+|----------|------|------------------|-----------|-------|
+
+**Feuille Productions (Usines)** :
+| Usine ID | Date | Type Marchandise | Tonnes Reçues | Tonnes Vendues | Client |
+|----------|------|------------------|---------------|----------------|--------|
+
+**Feuille Affectations (Personnel Usines)** :
+| Usine ID | Salarié ID | Date | Heures/Jour | Notes |
+|----------|------------|------|-------------|-------|
 
 ### Modifier le schéma de base de données
 
@@ -611,12 +642,63 @@ erp-saas-construction/
 }
 ```
 
+#### Table `usine_consommations`
+
+```typescript
+{
+  id: string (UUID)
+  usineId: string (FK → usines.id)
+  date: date
+  consommationElectrique: decimal
+  consommationGaz: decimal
+  unite: string (default: "kWh")
+  createdAt: timestamp
+}
+```
+
+#### Table `usine_productions`
+
+```typescript
+{
+  id: string (UUID)
+  usineId: string (FK → usines.id)
+  date: date
+  typeMarchandise: string
+  tonnesRecues: decimal
+  tonnesVendues: decimal
+  clientId: string (nullable)
+  clientNom: string (nullable)
+  notes: text (nullable)
+  createdAt: timestamp
+}
+```
+
+#### Table `usine_affectations_salaries`
+
+```typescript
+{
+  id: string (UUID)
+  usineId: string (FK → usines.id)
+  salarieId: string (FK → salaries.id)
+  date: date
+  heuresParJour: decimal (default: 8)
+  notes: text (nullable)
+  createdAt: timestamp
+}
+```
+
 ### Relations clés
 
 ```
 chantiers.responsableId → salaries.id (Responsable de projet)
 equipements.operatorId → salaries.id (Conducteur d'équipement)
 depenses.chantierId → chantiers.id (Dépense liée à un chantier)
+stock_items.usineId → usines.id (Article stocké dans une usine)
+usine_consommations.usineId → usines.id (Consommation d'une usine)
+usine_productions.usineId → usines.id (Production d'une usine)
+usine_affectations_salaries.usineId → usines.id (Affectation à une usine)
+usine_affectations_salaries.salarieId → salaries.id (Salarié affecté)
+```
 depenses.stockItemId → stock_items.id (Article acheté)
 stock_items.usineId → usines.id (Usine de stockage)
 affectations_salaries → chantiers + salaries (Affectation personnel)
