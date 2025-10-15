@@ -3,7 +3,7 @@ import { eq, desc } from "drizzle-orm";
 import { 
   users, chantiers, salaries, equipements, 
   affectationsSalaries, affectationsEquipements, depenses,
-  usines, stockItems,
+  usines, stockItems, usineConsommations, usineProductions, usineAffectationsSalaries,
   type User, type InsertUser,
   type Chantier, type InsertChantier,
   type Salarie, type InsertSalarie,
@@ -12,7 +12,10 @@ import {
   type AffectationEquipement, type InsertAffectationEquipement,
   type Depense, type InsertDepense,
   type Usine, type InsertUsine,
-  type StockItem, type InsertStockItem
+  type StockItem, type InsertStockItem,
+  type UsineConsommation, type InsertUsineConsommation,
+  type UsineProduction, type InsertUsineProduction,
+  type UsineAffectationSalarie, type InsertUsineAffectationSalarie
 } from "@shared/schema";
 
 export interface IStorage {
@@ -74,6 +77,27 @@ export interface IStorage {
   createStockItem(stockItem: InsertStockItem): Promise<StockItem>;
   updateStockItem(id: string, stockItem: Partial<InsertStockItem>): Promise<StockItem | undefined>;
   deleteStockItem(id: string): Promise<void>;
+
+  // Usine Consommations
+  getAllUsineConsommations(): Promise<UsineConsommation[]>;
+  getUsineConsommationsByUsine(usineId: string): Promise<UsineConsommation[]>;
+  getUsineConsommationsByDate(date: string): Promise<UsineConsommation[]>;
+  createUsineConsommation(consommation: InsertUsineConsommation): Promise<UsineConsommation>;
+  deleteUsineConsommation(id: string): Promise<void>;
+
+  // Usine Productions
+  getAllUsineProductions(): Promise<UsineProduction[]>;
+  getUsineProductionsByUsine(usineId: string): Promise<UsineProduction[]>;
+  getUsineProductionsByDate(date: string): Promise<UsineProduction[]>;
+  createUsineProduction(production: InsertUsineProduction): Promise<UsineProduction>;
+  deleteUsineProduction(id: string): Promise<void>;
+
+  // Usine Affectations Salariés
+  getAllUsineAffectationsSalaries(): Promise<UsineAffectationSalarie[]>;
+  getUsineAffectationsSalariesByUsine(usineId: string): Promise<UsineAffectationSalarie[]>;
+  getUsineAffectationsSalariesByDate(date: string): Promise<UsineAffectationSalarie[]>;
+  createUsineAffectationSalarie(affectation: InsertUsineAffectationSalarie): Promise<UsineAffectationSalarie>;
+  deleteUsineAffectationSalarie(id: string): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -283,6 +307,84 @@ export class DbStorage implements IStorage {
 
   async deleteStockItem(id: string): Promise<void> {
     await db.delete(stockItems).where(eq(stockItems.id, id));
+  }
+
+  // Usine Consommations
+  async getAllUsineConsommations(): Promise<UsineConsommation[]> {
+    return await db.select().from(usineConsommations).orderBy(desc(usineConsommations.date));
+  }
+
+  async getUsineConsommationsByUsine(usineId: string): Promise<UsineConsommation[]> {
+    return await db.select().from(usineConsommations)
+      .where(eq(usineConsommations.usineId, usineId))
+      .orderBy(desc(usineConsommations.date));
+  }
+
+  async getUsineConsommationsByDate(date: string): Promise<UsineConsommation[]> {
+    return await db.select().from(usineConsommations)
+      .where(eq(usineConsommations.date, date))
+      .orderBy(usineConsommations.usineId);
+  }
+
+  async createUsineConsommation(insertConsommation: InsertUsineConsommation): Promise<UsineConsommation> {
+    const result = await db.insert(usineConsommations).values(insertConsommation).returning();
+    return result[0];
+  }
+
+  async deleteUsineConsommation(id: string): Promise<void> {
+    await db.delete(usineConsommations).where(eq(usineConsommations.id, id));
+  }
+
+  // Usine Productions
+  async getAllUsineProductions(): Promise<UsineProduction[]> {
+    return await db.select().from(usineProductions).orderBy(desc(usineProductions.date));
+  }
+
+  async getUsineProductionsByUsine(usineId: string): Promise<UsineProduction[]> {
+    return await db.select().from(usineProductions)
+      .where(eq(usineProductions.usineId, usineId))
+      .orderBy(desc(usineProductions.date));
+  }
+
+  async getUsineProductionsByDate(date: string): Promise<UsineProduction[]> {
+    return await db.select().from(usineProductions)
+      .where(eq(usineProductions.date, date))
+      .orderBy(usineProductions.usineId);
+  }
+
+  async createUsineProduction(insertProduction: InsertUsineProduction): Promise<UsineProduction> {
+    const result = await db.insert(usineProductions).values(insertProduction).returning();
+    return result[0];
+  }
+
+  async deleteUsineProduction(id: string): Promise<void> {
+    await db.delete(usineProductions).where(eq(usineProductions.id, id));
+  }
+
+  // Usine Affectations Salariés
+  async getAllUsineAffectationsSalaries(): Promise<UsineAffectationSalarie[]> {
+    return await db.select().from(usineAffectationsSalaries).orderBy(desc(usineAffectationsSalaries.date));
+  }
+
+  async getUsineAffectationsSalariesByUsine(usineId: string): Promise<UsineAffectationSalarie[]> {
+    return await db.select().from(usineAffectationsSalaries)
+      .where(eq(usineAffectationsSalaries.usineId, usineId))
+      .orderBy(desc(usineAffectationsSalaries.date));
+  }
+
+  async getUsineAffectationsSalariesByDate(date: string): Promise<UsineAffectationSalarie[]> {
+    return await db.select().from(usineAffectationsSalaries)
+      .where(eq(usineAffectationsSalaries.date, date))
+      .orderBy(usineAffectationsSalaries.usineId);
+  }
+
+  async createUsineAffectationSalarie(insertAffectation: InsertUsineAffectationSalarie): Promise<UsineAffectationSalarie> {
+    const result = await db.insert(usineAffectationsSalaries).values(insertAffectation).returning();
+    return result[0];
+  }
+
+  async deleteUsineAffectationSalarie(id: string): Promise<void> {
+    await db.delete(usineAffectationsSalaries).where(eq(usineAffectationsSalaries.id, id));
   }
 }
 

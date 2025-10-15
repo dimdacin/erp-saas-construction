@@ -644,6 +644,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== USINE CONSOMMATIONS ROUTES ==========
+  app.get("/api/usine-consommations", async (req, res) => {
+    try {
+      const consommations = await storage.getAllUsineConsommations();
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.get("/api/usine-consommations/usine/:usineId", async (req, res) => {
+    try {
+      const consommations = await storage.getUsineConsommationsByUsine(req.params.usineId);
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.get("/api/usine-consommations/date/:date", async (req, res) => {
+    try {
+      const consommations = await storage.getUsineConsommationsByDate(req.params.date);
+      res.json(consommations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine consommations" });
+    }
+  });
+
+  app.post("/api/usine-consommations", async (req, res) => {
+    try {
+      const consommation = await storage.createUsineConsommation(req.body);
+      res.status(201).json(consommation);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid consommation data" });
+    }
+  });
+
+  app.delete("/api/usine-consommations/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineConsommation(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete consommation" });
+    }
+  });
+
+  // ========== USINE PRODUCTIONS ROUTES ==========
+  app.get("/api/usine-productions", async (req, res) => {
+    try {
+      const productions = await storage.getAllUsineProductions();
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.get("/api/usine-productions/usine/:usineId", async (req, res) => {
+    try {
+      const productions = await storage.getUsineProductionsByUsine(req.params.usineId);
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.get("/api/usine-productions/date/:date", async (req, res) => {
+    try {
+      const productions = await storage.getUsineProductionsByDate(req.params.date);
+      res.json(productions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine productions" });
+    }
+  });
+
+  app.post("/api/usine-productions", async (req, res) => {
+    try {
+      const production = await storage.createUsineProduction(req.body);
+      res.status(201).json(production);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid production data" });
+    }
+  });
+
+  app.delete("/api/usine-productions/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineProduction(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete production" });
+    }
+  });
+
+  // ========== USINE AFFECTATIONS SALARIES ROUTES ==========
+  app.get("/api/usine-affectations-salaries", async (req, res) => {
+    try {
+      const affectations = await storage.getAllUsineAffectationsSalaries();
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.get("/api/usine-affectations-salaries/usine/:usineId", async (req, res) => {
+    try {
+      const affectations = await storage.getUsineAffectationsSalariesByUsine(req.params.usineId);
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.get("/api/usine-affectations-salaries/date/:date", async (req, res) => {
+    try {
+      const affectations = await storage.getUsineAffectationsSalariesByDate(req.params.date);
+      res.json(affectations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch usine affectations salaries" });
+    }
+  });
+
+  app.post("/api/usine-affectations-salaries", async (req, res) => {
+    try {
+      const affectation = await storage.createUsineAffectationSalarie(req.body);
+      res.status(201).json(affectation);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid affectation data" });
+    }
+  });
+
+  app.delete("/api/usine-affectations-salaries/:id", async (req, res) => {
+    try {
+      await storage.deleteUsineAffectationSalarie(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete affectation" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

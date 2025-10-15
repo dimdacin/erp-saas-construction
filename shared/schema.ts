@@ -135,6 +135,40 @@ export const depenses = pgTable("depenses", {
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
+// Factory operations data
+export const usineConsommations = pgTable("usine_consommations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  usineId: varchar("usine_id").notNull().references(() => usines.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  consommationElectrique: decimal("consommation_electrique", { precision: 12, scale: 2 }),
+  consommationGaz: decimal("consommation_gaz", { precision: 12, scale: 2 }),
+  unite: varchar("unite", { length: 50 }).notNull().default("kWh"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const usineProductions = pgTable("usine_productions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  usineId: varchar("usine_id").notNull().references(() => usines.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  typeMarchandise: varchar("type_marchandise", { length: 100 }).notNull(),
+  tonnesRecues: decimal("tonnes_recues", { precision: 12, scale: 2 }),
+  tonnesVendues: decimal("tonnes_vendues", { precision: 12, scale: 2 }),
+  clientId: varchar("client_id"),
+  clientNom: text("client_nom"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const usineAffectationsSalaries = pgTable("usine_affectations_salaries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  usineId: varchar("usine_id").notNull().references(() => usines.id, { onDelete: "cascade" }),
+  salarieId: varchar("salarie_id").notNull().references(() => salaries.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  heuresParJour: decimal("heures_par_jour", { precision: 4, scale: 2 }).notNull().default("8"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
@@ -185,8 +219,32 @@ export const insertDepenseSchema = createInsertSchema(depenses).omit({
   photoFacturePath: true,
 });
 
+export const insertUsineConsommationSchema = createInsertSchema(usineConsommations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUsineProductionSchema = createInsertSchema(usineProductions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUsineAffectationSalarieSchema = createInsertSchema(usineAffectationsSalaries).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUsine = z.infer<typeof insertUsineSchema>;
 export type Usine = typeof usines.$inferSelect;
+
+export type InsertUsineConsommation = z.infer<typeof insertUsineConsommationSchema>;
+export type UsineConsommation = typeof usineConsommations.$inferSelect;
+
+export type InsertUsineProduction = z.infer<typeof insertUsineProductionSchema>;
+export type UsineProduction = typeof usineProductions.$inferSelect;
+
+export type InsertUsineAffectationSalarie = z.infer<typeof insertUsineAffectationSalarieSchema>;
+export type UsineAffectationSalarie = typeof usineAffectationsSalaries.$inferSelect;
 
 export type InsertStockItem = z.infer<typeof insertStockItemSchema>;
 export type StockItem = typeof stockItems.$inferSelect;

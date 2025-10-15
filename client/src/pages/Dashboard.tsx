@@ -3,9 +3,15 @@ import ProjectsTable from "@/components/ProjectsTable";
 import BudgetChart from "@/components/BudgetChart";
 import ResourceList from "@/components/ResourceList";
 import WorkloadCalendar from "@/components/WorkloadCalendar";
-import { Building2, Users, Wrench, DollarSign } from "lucide-react";
+import FactoryDashboard from "@/components/FactoryDashboard";
+import { Building2, Users, Wrench, DollarSign, Factory } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { format } from "date-fns";
 
 export default function Dashboard() {
+  const [selectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  
   const stats = [
     {
       title: "Chantiers Actifs",
@@ -123,30 +129,49 @@ export default function Dashboard() {
 
       <DashboardStats stats={stats} />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Chantiers en cours</h2>
-            <ProjectsTable
-              projects={projects}
-              onView={(id) => console.log('View project:', id)}
-              onEdit={(id) => console.log('Edit project:', id)}
-            />
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="overview">
+            <Building2 className="h-4 w-4 mr-2" />
+            Général
+          </TabsTrigger>
+          <TabsTrigger value="usines">
+            <Factory className="h-4 w-4 mr-2" />
+            Usines
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Chantiers en cours</h2>
+                <ProjectsTable
+                  projects={projects}
+                  onView={(id) => console.log('View project:', id)}
+                  onEdit={(id) => console.log('Edit project:', id)}
+                />
+              </div>
+
+              <BudgetChart data={budgetData} />
+            </div>
+
+            <div className="space-y-6">
+              <ResourceList
+                title="Salariés"
+                resources={resources}
+                onAdd={() => console.log('Add resource')}
+              />
+              
+              <WorkloadCalendar assignments={assignments} />
+            </div>
           </div>
+        </TabsContent>
 
-          <BudgetChart data={budgetData} />
-        </div>
-
-        <div className="space-y-6">
-          <ResourceList
-            title="Salariés"
-            resources={resources}
-            onAdd={() => console.log('Add resource')}
-          />
-          
-          <WorkloadCalendar assignments={assignments} />
-        </div>
-      </div>
+        <TabsContent value="usines">
+          <FactoryDashboard selectedDate={selectedDate} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
