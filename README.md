@@ -13,12 +13,12 @@
 
 - [Vue d'ensemble](#-vue-densemble)
 - [Fonctionnalités](#-fonctionnalités)
-- [Architecture technique](#-architecture-technique)
+- [Architecture technique](#architecture-technique)
 - [Installation & Configuration](#-installation--configuration)
 - [Gestion des données](#-gestion-des-données)
 - [Extension & Personnalisation](#-extension--personnalisation)
 - [Roadmap & Améliorations](#-roadmap--améliorations)
-- [Structure du projet](#-structure-du-projet)
+- [Structure du projet](#️-structure-du-projet)
 - [API Reference](#-api-reference)
 
 ---
@@ -40,11 +40,13 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 ## 🚀 Fonctionnalités
 
 ### 📊 Tableau de bord (Dashboard)
+
 - Vue d'ensemble des KPI : chantiers actifs, budgets, ressources
 - Graphiques de progression budgétaire (Recharts)
 - Indicateurs de performance en temps réel
 
 ### 🏗️ Gestion des chantiers
+
 - Création et suivi de projets de construction
 - Budget détaillé : Main d'œuvre, Matériaux, Équipement (prévisionnel vs réel)
 - Affectation de responsables de projet
@@ -52,6 +54,7 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 - Code projet et bénéficiaire
 
 ### 👥 Gestion des salariés (RH)
+
 - Fiche complète : Nom, fonction, compétences, contacts
 - Organisation : Division, Service, Centre de coût
 - Finances : Taux horaire, salaire mensuel, accords supplémentaires
@@ -61,6 +64,7 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 - **Modification en masse** : Dialog d'édition avec validation Zod
 
 ### 🚜 Gestion des équipements
+
 - Inventaire complet : ID, Modèle, Immatriculation, Année
 - Métadonnées techniques : Type de carburant, GPS, compteur
 - Coûts : Taux horaire, consommation carburant, coût de maintenance
@@ -68,6 +72,7 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 - Import Excel avec mapping automatique de colonnes
 
 ### 📦 Achat/Stocks
+
 - **Gestion des stocks** : Articles, quantités, unités, usines
 - **Workflow de réception** :
   - Création d'achats (niveau Admin/Chantier)
@@ -77,16 +82,19 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 - **Usines** : Gestion des sites de production/stockage
 
 ### 💰 Finances & Trésorerie
+
 - Suivi des dépenses par chantier
 - Catégorisation des coûts
 - Rapports budgétaires avec comparaison prévisionnel/réel
 
 ### 📅 Planning
+
 - Affectation salariés → chantiers (dates, heures/jour)
 - Affectation équipements → chantiers
 - Gestion des disponibilités
 
 ### 📄 Documentation
+
 - Centralisation des documents de chantier
 - Upload et gestion de fichiers
 
@@ -95,7 +103,8 @@ Ce système ERP SaaS est conçu spécifiquement pour les entreprises de construc
 ## 🏛️ Architecture technique
 
 ### Frontend
-```
+
+```text
 React 18 + TypeScript
 ├── Vite (Build tool, HMR)
 ├── Wouter (Routing léger)
@@ -108,7 +117,8 @@ React 18 + TypeScript
 ```
 
 ### Backend
-```
+
+```text
 Express.js (Node.js ESM)
 ├── RESTful API (GET, POST, PATCH, DELETE)
 ├── Zod validation (Runtime type checking)
@@ -118,7 +128,8 @@ Express.js (Node.js ESM)
 ```
 
 ### Base de données
-```
+
+```text
 PostgreSQL (Neon serverless)
 ├── Drizzle ORM (Type-safe queries)
 ├── UUID primary keys (gen_random_uuid())
@@ -128,6 +139,7 @@ PostgreSQL (Neon serverless)
 ```
 
 ### Stack complet
+
 - **Languages** : TypeScript 5.6
 - **Runtime** : Node.js (ESM modules)
 - **Database** : PostgreSQL via Neon
@@ -143,6 +155,7 @@ PostgreSQL (Neon serverless)
 ## 📦 Installation & Configuration
 
 ### Prérequis
+
 - Node.js 18+ ou compatible
 - PostgreSQL database (Neon recommandé)
 - Git
@@ -150,12 +163,14 @@ PostgreSQL (Neon serverless)
 ### Étapes d'installation
 
 1. **Cloner le dépôt**
+
 ```bash
 git clone https://github.com/dimdacin/erp-saas-construction.git
 cd erp-saas-construction
 ```
 
 2. **Installer les dépendances**
+
 ```bash
 npm install
 ```
@@ -175,16 +190,19 @@ VITE_API_URL=http://localhost:5000
 > ⚠️ **Important** : Ne jamais commiter le fichier `.env` (déjà dans .gitignore)
 
 4. **Synchroniser le schéma de base de données**
+
 ```bash
 npm run db:push
 ```
 
 Si vous rencontrez des warnings de perte de données :
+
 ```bash
 npm run db:push --force
 ```
 
 5. **Lancer l'application**
+
 ```bash
 # Mode développement (port 5000)
 npm run dev
@@ -214,6 +232,7 @@ npx tsx server/import-data.ts
 ```
 
 **Fonctionnalités de l'import** :
+
 - ✅ Mapping automatique des colonnes Excel → schéma DB
 - ✅ Matching intelligent des noms (opérateurs ↔ équipements)
 - ✅ Création automatique des relations (FK)
@@ -267,11 +286,13 @@ interface IStorage {
 ```
 
 3. **Synchroniser avec la base de données**
+
 ```bash
 npm run db:push
 ```
 
 4. **Redémarrer le serveur** pour recharger les mappings Drizzle
+
 ```bash
 npm run dev
 ```
@@ -389,6 +410,7 @@ export const tablePreferences = pgTable("table_preferences", {
 ### Ajouter une nouvelle langue
 
 1. **Créer le fichier de traduction** :
+
 ```bash
 # Créer client/src/i18n/locales/es.json
 {
@@ -399,6 +421,7 @@ export const tablePreferences = pgTable("table_preferences", {
 ```
 
 2. **Enregistrer la langue** (`client/src/i18n/config.ts`)
+
 ```typescript
 import es from './locales/es.json';
 
@@ -474,6 +497,7 @@ erp-saas-construction/
 ### Schéma de base de données
 
 #### Table `chantiers`
+
 ```typescript
 {
   id: string (UUID)
@@ -499,6 +523,7 @@ erp-saas-construction/
 ```
 
 #### Table `salaries`
+
 ```typescript
 {
   id: string (UUID)
@@ -522,6 +547,7 @@ erp-saas-construction/
 ```
 
 #### Table `equipements`
+
 ```typescript
 {
   id: string (UUID)
@@ -550,6 +576,7 @@ erp-saas-construction/
 ```
 
 #### Table `depenses` (Achats/Stocks)
+
 ```typescript
 {
   id: string (UUID)
@@ -570,6 +597,7 @@ erp-saas-construction/
 ```
 
 #### Table `stock_items`
+
 ```typescript
 {
   id: string (UUID)
@@ -600,6 +628,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 ## 🚀 Roadmap & Améliorations
 
 ### Phase 1 : Dashboard personnalisable ⏳
+
 - [ ] Système de widgets drag-and-drop (react-grid-layout)
 - [ ] Sauvegarder la disposition du dashboard par utilisateur
 - [ ] Widgets configurables :
@@ -610,6 +639,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Thèmes de couleurs personnalisables
 
 ### Phase 2 : Exports & Rapports 📊
+
 - [ ] Export Excel multi-feuilles (chantiers, salariés, équipements)
 - [ ] Génération PDF de rapports :
   - [ ] Rapport budgétaire par chantier
@@ -619,6 +649,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Planification d'exports automatiques (cron jobs)
 
 ### Phase 3 : Permissions & Rôles 🔐
+
 - [ ] Système de rôles : Admin, Chef de projet, RH, Comptable
 - [ ] Permissions granulaires par module
 - [ ] Authentification renforcée (Replit Auth ou JWT)
@@ -626,6 +657,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Approbations multi-niveaux (achats, budgets)
 
 ### Phase 4 : Fonctionnalités avancées ✨
+
 - [ ] Notifications en temps réel (WebSocket déjà installé - `ws`)
 - [ ] Planning visuel avec calendrier interactif
 - [ ] Gestion des congés et absences
@@ -635,6 +667,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Facturation intégrée (génération factures clients)
 
 ### Phase 5 : Analytics & BI 📈
+
 - [ ] Tableaux de bord analytiques avancés
 - [ ] Prévisions budgétaires (ML/IA)
 - [ ] Analyse de rentabilité par chantier
@@ -643,6 +676,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Rapports d'écart budget prévisionnel/réel automatisés
 
 ### Phase 6 : Mobile & Offline 📱
+
 - [ ] Application mobile (React Native ou PWA)
 - [ ] Mode hors-ligne (IndexedDB sync)
 - [ ] Scan de codes-barres équipement
@@ -650,6 +684,7 @@ affectations_equipements → chantiers + equipements (Affectation matériel)
 - [ ] Signature électronique (réception matériel)
 
 ### Phase 7 : Intégrations externes 🔌
+
 - [ ] Intégration comptabilité (export vers logiciels compta)
 - [ ] API publique pour intégrations tierces
 - [ ] Webhooks pour événements (nouveau chantier, budget dépassé)
@@ -681,7 +716,9 @@ npm run db:push   # Synchroniser le schéma DB
 ### Points d'attention techniques
 
 #### ⚠️ Valeurs zéro dans les affichages
+
 Le système utilise des checks stricts pour afficher les valeurs zéro :
+
 ```typescript
 // ✅ Correct
 {budgetReel !== undefined && budgetReel !== null ? `${budgetReel} €` : '-'}
@@ -691,14 +728,18 @@ Le système utilise des checks stricts pour afficher les valeurs zéro :
 ```
 
 #### 🔄 Redémarrage serveur après modification schéma
+
 Drizzle ORM charge les mappings au démarrage. Après `npm run db:push`, **redémarrez le serveur** :
+
 ```bash
 # Ctrl+C puis
 npm run dev
 ```
 
 #### 📝 Mapping camelCase ↔ snake_case
+
 TypeScript utilise camelCase, PostgreSQL snake_case :
+
 ```typescript
 // shared/schema.ts
 coastCenter: varchar("coast_center") // ✅
@@ -730,9 +771,10 @@ Les contributions sont les bienvenues ! Pour contribuer :
 ## 📞 Support
 
 Pour toute question ou assistance :
-- 📧 Email : dim.dacin@gmail.com
+
+- 📧 Email : <dim.dacin@gmail.com>
 - 🐛 Issues : [GitHub Issues](https://github.com/dimdacin/erp-saas-construction/issues)
 
 ---
 
-**Développé avec ❤️ pour optimiser la gestion de projets de construction**
+## Développé avec ❤️ pour optimiser la gestion de projets de construction

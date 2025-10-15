@@ -1,8 +1,11 @@
 import ProjectsTable from "@/components/ProjectsTable";
 import AddProjectDialog from "@/components/AddProjectDialog";
+import ImportChantiersDialog from "@/components/ImportChantiersDialog";
 import { useQuery } from "@tanstack/react-query";
 import type { Chantier } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { Upload, Plus } from "lucide-react";
 
 export default function Chantiers() {
   const { t } = useTranslation();
@@ -60,7 +63,15 @@ export default function Chantiers() {
           <h1 className="text-3xl font-semibold tracking-tight">{t('chantiers.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('chantiers.subtitle')}</p>
         </div>
-        <AddProjectDialog onAdd={(project) => console.log('New project:', project)} />
+        <div className="flex gap-2">
+          <ImportChantiersDialog>
+            <Button variant="outline">
+              <Upload className="h-4 w-4 mr-2" />
+              Importer Excel
+            </Button>
+          </ImportChantiersDialog>
+          <AddProjectDialog onAdd={(project) => console.log('New project:', project)} />
+        </div>
       </div>
 
       <ProjectsTable

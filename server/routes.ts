@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
 import * as XLSX from 'xlsx';
-import { parseExcelToEquipements } from "./import";
+import { parseExcelToEquipements, parseExcelToChantiers, parseExcelToSalaries } from "./import";
 import { 
   insertChantierSchema, insertSalarieSchema, insertEquipementSchema,
   insertAffectationSalarieSchema, insertAffectationEquipementSchema, insertDepenseSchema
@@ -466,6 +466,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error('Erreur lors de l\'import Excel:', error);
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Erreur inconnue lors de l\'import' 
+      });
+    }
+  });
+
+  // ========== DEBUG EXCEL SALARIÉS ==========
+  app.post("/api/salaries/debug-excel", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Aucun fichier fourni" });
+      }
+
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames.find(name => 
+        name.toLowerCase().includes('salarie') || 
+        name.toLowerCase().includes('personnel') ||
+        name.toLowerCase().includes('employe')
+      ) || workbook.SheetNames[0];
+      
+      const worksheet = workbook.Sheets[sheetName];
+      const data: any[] = XLSX.utils.sheet_to_json(worksheet);
+      
+      const firstRow = data[0] || {};
+      const columnNames = Object.keys(firstRow);
+      
+      return res.status(200).json({
+        sheetNames: workbook.SheetNames,
+        selectedSheet: sheetName,
+        columnNames,
+        firstRow,
+        totalRows: data.length,
+        sample: data.slice(0, 3) // 3 premières lignes comme échantillon
+      });
+    } catch (error: any) {
+      console.error('Erreur debug Excel salariés:', error);
+      return res.status(500).json({ error: error.message || 'Erreur inconnue' });
+    }
+  });
+
+  // ========== IMPORT ROUTES ==========
+  app.post("/api/chantiers/import", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: 'Aucun fichier fourni' });
+      }
+
+      console.log('Début import chantiers Excel:', req.file.originalname);
+      
+      const chantiers = parseExcelToChantiers(req.file.buffer);
+      console.log('Chantiers parsés:', chantiers.length);
+
+      const imported = [];
+      const errors = [];
+
+      for (const chantier of chantiers) {
+        try {
+          const imported_chantier = await storage.createChantier(chantier);
+          imported.push(imported_chantier);
+        } catch (error: any) {
+          console.error('Erreur insertion chantier:', error);
+          errors.push({ chantier: chantier.nom, error: error.message });
+        }
+      }
+
+      console.log('Import chantiers terminé:', imported.length, 'importés sur', chantiers.length);
+
+      return res.status(200).json({ 
+        success: true, 
+        imported: imported.length,
+        total: chantiers.length,
+        errors: errors.length > 0 ? errors : undefined,
+        chantiers: imported
+      });
+    } catch (error: any) {
+      console.error('Erreur lors de l\'import Excel chantiers:', error);
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Erreur inconnue lors de l\'import' 
+      });
+    }
+  });
+
+  // ========== IMPORT SALARIÉS ==========
+  app.post("/api/salaries/import", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: 'Aucun fichier fourni' });
+      }
+
+      console.log('Début import salariés Excel:', req.file.originalname);
+      
+      const salaries = parseExcelToSalaries(req.file.buffer);
+      console.log('Salariés parsés:', salaries.length);
+
+      const imported = [];
+      const errors = [];
+
+      for (const salarie of salaries) {
+        try {
+          const imported_salarie = await storage.createSalarie(salarie);
+          imported.push(imported_salarie);
+        } catch (error: any) {
+          console.error('Erreur insertion salarié:', error);
+          errors.push({ salarie: `${salarie.nom} ${salarie.prenom}`, error: error.message });
+        }
+      }
+
+      console.log('Import salariés terminé:', imported.length, 'importés sur', salaries.length);
+
+      return res.status(200).json({ 
+        success: true, 
+        imported: imported.length,
+        total: salaries.length,
+        errors: errors.length > 0 ? errors : undefined,
+        salaries: imported
+      });
+    } catch (error: any) {
+      console.error('Erreur lors de l\'import Excel salariés:', error);
       return res.status(500).json({ 
         success: false, 
         error: error.message || 'Erreur inconnue lors de l\'import' 

@@ -13,7 +13,7 @@ import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { t } = useTranslation();
 
   const menuItems = [
@@ -82,11 +82,15 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.key}>
-                  <SidebarMenuButton asChild isActive={location === item.url}>
-                    <a href={item.url} data-testid={`link-${item.key}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    isActive={location === item.url}
+                    onClick={() => navigate(item.url)}
+                  >
+                    <button data-testid={`link-${item.key}`}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

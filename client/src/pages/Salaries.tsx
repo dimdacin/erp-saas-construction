@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Download, Users, Filter } from "lucide-react";
+import { Plus, Search, Download, Users, Filter, Upload, FileSearch } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import type { Salarie, InsertSalarie } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import ImportSalariesDialog from "@/components/ImportSalariesDialog";
+import DebugSalariesExcelDialog from "@/components/DebugSalariesExcelDialog";
 import {
   Dialog,
   DialogContent,
@@ -164,6 +166,18 @@ export default function Salaries() {
           <p className="text-muted-foreground mt-1">Gérez votre équipe et ressources humaines</p>
         </div>
         <div className="flex gap-2">
+          <DebugSalariesExcelDialog>
+            <Button variant="outline" size="sm">
+              <FileSearch className="h-4 w-4 mr-2" />
+              Analyser Excel
+            </Button>
+          </DebugSalariesExcelDialog>
+          <ImportSalariesDialog>
+            <Button variant="outline">
+              <Upload className="h-4 w-4 mr-2" />
+              Importer Excel
+            </Button>
+          </ImportSalariesDialog>
           <Button data-testid="button-nouveau-salarie">
             <Plus className="h-4 w-4 mr-2" />
             Nouveau salarié
