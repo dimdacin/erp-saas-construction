@@ -14,6 +14,7 @@ import Equipements from "@/pages/Equipements";
 import Achats from "@/pages/Achats";
 import Finances from "@/pages/Finances";
 import Documentation from "@/pages/Documentation";
+import AdminImport from "@/pages/AdminImport";
 import NotFound from "@/pages/not-found";
 import "./i18n/config";
 import { useTranslation } from "react-i18next";
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/finances" component={Finances} />
       <Route path="/budgets" component={() => <div className="p-6"><h1 className="text-2xl font-semibold">{t('nav.budgets')} - {t('common.inDevelopment')}</h1></div>} />
       <Route path="/documentation" component={Documentation} />
+      <Route path="/admin/import" component={AdminImport} />
       <Route component={NotFound} />
     </Switch>
   );

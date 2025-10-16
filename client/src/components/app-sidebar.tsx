@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, Users, Wrench, Calendar, BarChart3, ShoppingCart, Wallet, FileText } from "lucide-react";
+import { LayoutDashboard, Building2, Users, Wrench, Calendar, BarChart3, ShoppingCart, Wallet, FileText, Upload } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -73,6 +73,15 @@ export function AppSidebar() {
     },
   ];
 
+  const adminItems = [
+    {
+      title: "Import Excel",
+      url: "/admin/import",
+      icon: Upload,
+      key: "admin-import"
+    },
+  ];
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -81,6 +90,27 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
+                <SidebarMenuItem key={item.key}>
+                  <SidebarMenuButton 
+                    asChild 
+                    isActive={location === item.url}
+                    onClick={() => navigate(item.url)}
+                  >
+                    <button data-testid={`link-${item.key}`}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Admin</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map((item) => (
                 <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton 
                     asChild 

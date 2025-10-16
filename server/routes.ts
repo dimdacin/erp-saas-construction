@@ -955,6 +955,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== GENERIC EXCEL IMPORT ROUTES ==========
+  app.post("/api/import/:sheet", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: "No file provided" });
+      }
+
+      const sheetName = req.params.sheet;
+      const { XlsxImportService } = await import("./xlsxImportService");
+      const importService = new XlsxImportService();
+
+      console.log(`Import request for sheet: ${sheetName}, file: ${req.file.originalname}`);
+
+      const result = await importService.importSheet(
+        req.file.buffer,
+        sheetName,
+        req.file.originalname
+      );
+
+      return res.status(200).json(result);
+    } catch (error: any) {
+      console.error('Error during import:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Unknown error during import'
+      });
+    }
+  });
+
+  app.post("/api/import/analyze", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: "No file provided" });
+      }
+
+      const { XlsxImportService } = await import("./xlsxImportService");
+      const importService = new XlsxImportService();
+
+      const availableSheets = importService.getAvailableSheets(req.file.buffer);
+      const sheetInfo: any = {};
+
+      for (const sheetName of availableSheets) {
+        const columns = importService.getSheetColumns(req.file.buffer, sheetName);
+        sheetInfo[sheetName] = {
+          columns,
+          mappingExists: true
+        };
+      }
+
+      return res.status(200).json({
+        success: true,
+        fileName: req.file.originalname,
+        availableSheets,
+        sheetInfo
+      });
+    } catch (error: any) {
+      console.error('Error analyzing file:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Error analyzing file'
+      });
+    }
+  });
+
+  app.get("/api/import/logs", async (req, res) => {
+    try {
+      const { importLogs } = await import("@shared/schema");
+      const { desc } = await import("drizzle-orm");
+      const logs = await db.select().from(importLogs).orderBy(desc(importLogs.createdAt)).limit(50);
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch import logs" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
