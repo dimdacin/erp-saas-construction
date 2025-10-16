@@ -1,0 +1,105 @@
+{
+  "RH": {
+    "tableName": "salaries",
+    "upsertKey": "inNum",
+    "columnMapping": {
+      "Coast_center": "coastCenter",
+      "Division": "division",
+      "Services": "services",
+      "fonctions": "poste",
+      "code_fonction": "codeFonction",
+      "In_num": "inNum",
+      "Names": "nom",
+      "salary_tarif": "tauxHoraire",
+      "Acord_sup": "acordSup",
+      "salary_w_month": "salaryMonth",
+      " Salary_h ": null
+    },
+    "transformations": {
+      "nom": {
+        "type": "split_name",
+        "fields": ["nom", "prenom"]
+      },
+      "statut": {
+        "type": "default",
+        "value": "disponible"
+      },
+      "competences": {
+        "type": "array_from_field",
+        "sourceField": "fonctions"
+      }
+    }
+  },
+  "Meca": {
+    "tableName": "equipements",
+    "upsertKey": "id",
+    "columnMapping": {
+      "id": "numeroSerie",
+      "category": "categorie",
+      "model": "modele",
+      "plate_number": "immatriculation",
+      "year": "year",
+      "status": "statut",
+      "operator_name": "operatorName",
+      "gps_unit": "gpsUnit",
+      "meter_unit": "meterUnit",
+      "fuel_type": "fuelType",
+      "hourly_sal_rate_lei": "salaireHoraireOperateur",
+      "fuel_consumption_100km": "fuelConsumption",
+      "annual_maintenance_cost_lei": "maintenanceCost",
+      "notes": null
+    },
+    "transformations": {
+      "nom": {
+        "type": "concat",
+        "fields": ["category", "model"],
+        "separator": " "
+      },
+      "type": {
+        "type": "copy",
+        "sourceField": "category"
+      },
+      "statut": {
+        "type": "map",
+        "sourceField": "status",
+        "mapping": {
+          "": "disponible",
+          "Active": "disponible",
+          "Inactive": "en_panne"
+        },
+        "default": "disponible"
+      }
+    }
+  },
+  "Chantier": {
+    "tableName": "chantiers",
+    "upsertKey": "codeProjet",
+    "columnMapping": {
+      "ID chantier": "codeProjet",
+      "denomination": "nom",
+      "beneficiaire": "beneficiaire",
+      "Responsable chantier": null,
+      " montant contrat sans tva ": "budgetPrevisionnel",
+      " maindoeuvre ": "budgetMainDoeuvre",
+      " materiaux ": "budgetMateriaux",
+      " equipement ": "budgetEquipement",
+      " montant MDO reelle ": "budgetReelMainDoeuvre",
+      " achat materiaux ": "budgetReelMateriaux",
+      " cout mecanisme ": "budgetReelEquipement"
+    },
+    "transformations": {
+      "statut": {
+        "type": "default",
+        "value": "en_cours"
+      },
+      "progression": {
+        "type": "default",
+        "value": 0
+      },
+      "budgetRealise": {
+        "type": "sum",
+        "fields": ["budgetReelMainDoeuvre", "budgetReelMateriaux", "budgetReelEquipement"]
+      }
+    }
+  }
+}

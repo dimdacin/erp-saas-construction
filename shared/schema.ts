@@ -169,6 +169,21 @@ export const usineAffectationsSalaries = pgTable("usine_affectations_salaries", 
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
+export const importLogs = pgTable("import_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sheetName: varchar("sheet_name", { length: 100 }).notNull(),
+  fileName: varchar("file_name", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).notNull(), // 'success', 'partial', 'failed'
+  rowsProcessed: integer("rows_processed").notNull().default(0),
+  rowsInserted: integer("rows_inserted").notNull().default(0),
+  rowsUpdated: integer("rows_updated").notNull().default(0),
+  rowsIgnored: integer("rows_ignored").notNull().default(0),
+  rowsErrored: integer("rows_errored").notNull().default(0),
+  errors: text("errors"), // JSON string of errors
+  duration: integer("duration"), // milliseconds
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
@@ -234,6 +249,11 @@ export const insertUsineAffectationSalarieSchema = createInsertSchema(usineAffec
   createdAt: true,
 });
 
+export const insertImportLogSchema = createInsertSchema(importLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUsine = z.infer<typeof insertUsineSchema>;
 export type Usine = typeof usines.$inferSelect;
 
@@ -245,6 +265,9 @@ export type UsineProduction = typeof usineProductions.$inferSelect;
 
 export type InsertUsineAffectationSalarie = z.infer<typeof insertUsineAffectationSalarieSchema>;
 export type UsineAffectationSalarie = typeof usineAffectationsSalaries.$inferSelect;
+
+export type InsertImportLog = z.infer<typeof insertImportLogSchema>;
+export type ImportLog = typeof importLogs.$inferSelect;
 
 export type InsertStockItem = z.infer<typeof insertStockItemSchema>;
 export type StockItem = typeof stockItems.$inferSelect;
